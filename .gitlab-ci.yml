@@ -1,10 +1,11 @@
-# Static site on GitLab Pages: just copies the HTML files, no build tooling.
+# Static site on GitLab Pages: just copies the files, no build tooling.
 pages:
   stage: deploy
   image: busybox:latest
   script:
     - mkdir public
-    - cp *.html public/
+    - cp index.html style.css public/
+    - cp -r grade-* public/
   pages: true
   artifacts:
     paths:
