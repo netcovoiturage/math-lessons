@@ -2,27 +2,89 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Уроки математики</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
 <style>
-body{margin:0;font:18px/1.5 system-ui,sans-serif;background:#F7FAFD;color:#1B2430}
-main{max-width:640px;margin:0 auto;padding:32px 16px}
-h1{font-size:28px;margin:0 0 24px}
-ul{list-style:none;padding:0;margin:0;display:grid;gap:12px}
-a{display:block;padding:16px 18px;background:#fff;border:1px solid #C9D6E4;border-radius:10px;color:#2457C5;text-decoration:none;font-weight:600}
-a:hover,a:focus{border-color:#2457C5}
+:root{
+  --paper:#F7FAFD; --grid:#DCE7F2; --ink:#1B2430; --muted:#5A6878;
+  --blue:#2457C5; --red:#D2353F; --green:#1E8A4C; --violet:#8A3FC2; --orange:#C46A0A; --margin:#E58A94;
+  --card:#FFFFFF; --line:#C9D6E4;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#17222C; --grid:#223241; --ink:#E8EEF4; --muted:#9AA9B8;
+    --blue:#6E9BFF; --red:#FF6F78; --green:#4CC384; --violet:#C08BFF; --orange:#F0A24B; --margin:#8A3E47;
+    --card:#1E2B37; --line:#33475A;
+  }
+}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0; color:var(--ink); font:18px/1.6 "PT Sans",system-ui,sans-serif;
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+.page{max-width:1020px;margin:0 auto;padding:24px 20px 64px 44px;position:relative;min-height:100vh}
+.page::before{content:"";position:absolute;left:24px;top:0;bottom:0;width:2px;background:var(--margin)}
+h1,h2{font-family:Caveat,"Comic Sans MS",cursive;font-weight:700;line-height:1.1;margin:0}
+h1{font-size:clamp(2.4rem,6vw,3.6rem)}
+h2{font-size:1.9rem;margin:0 0 4px}
+.lead{color:var(--muted);font-size:1.1rem;max-width:68ch;margin:6px 0 32px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:20px}
+.card{
+  display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--ink);
+  background:var(--card);border:2px solid var(--line);border-left:6px solid var(--c);
+  border-radius:14px;padding:16px 18px;transition:transform .12s,border-color .12s;
+}
+.card:hover,.card:focus-visible{transform:translateY(-3px) rotate(-.4deg);border-color:var(--c)}
+.card:focus-visible{outline:3px solid var(--c);outline-offset:3px}
+.card p{margin:0;color:var(--muted);font-size:.98rem}
+.fx{font-family:Caveat,cursive;font-weight:700;font-size:2rem;line-height:1.15;color:var(--c)}
+.go{margin-top:auto;padding-top:6px;font-weight:700;color:var(--c)}
+@media (prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
 </style>
 </head>
 <body>
-<main>
+<div class="page">
 <h1>Уроки математики</h1>
-<ul>
-<li><a href="polynomials.html">Многочлены: стандартный вид, сложение и вычитание</a></li>
-<li><a href="monomial-multiplication.html">Умножение одночленов и возведение в степень</a></li>
-<li><a href="higher-degree-equations.html">Уравнения высших степеней</a></li>
-<li><a href="quadratic-function-graph.html">График квадратичной функции</a></li>
-<li><a href="pythagorean-trig-identity.html">Основное тригонометрическое тождество</a></li>
-</ul>
-</main>
+<p class="lead">Интерактивные уроки: двигайте ползунки, решайте задачи, проверяйте себя. Выберите тему.</p>
+<div class="grid">
+  <a class="card" style="--c:var(--blue)" href="polynomials.html">
+    <span class="fx">3x² + x − 7</span>
+    <h2>Многочлены</h2>
+    <p>Стандартный вид, сложение и вычитание.</p>
+    <span class="go">Открыть урок →</span>
+  </a>
+  <a class="card" style="--c:var(--green)" href="monomial-multiplication.html">
+    <span class="fx">(2x³)(3x²) = 6x⁵</span>
+    <h2>Умножение одночленов</h2>
+    <p>Умножение и возведение в степень.</p>
+    <span class="go">Открыть урок →</span>
+  </a>
+  <a class="card" style="--c:var(--orange)" href="higher-degree-equations.html">
+    <span class="fx">x⁴ − 5x² + 4 = 0</span>
+    <h2>Уравнения высших степеней</h2>
+    <p>Как решать уравнения выше второй степени.</p>
+    <span class="go">Открыть урок →</span>
+  </a>
+  <a class="card" style="--c:var(--red)" href="quadratic-function-graph.html">
+    <span class="fx">y = ax² + bx + c</span>
+    <h2>График квадратичной функции</h2>
+    <p>Как коэффициенты меняют параболу.</p>
+    <span class="go">Открыть урок →</span>
+  </a>
+  <a class="card" style="--c:var(--violet)" href="pythagorean-trig-identity.html">
+    <span class="fx">sin²α + cos²α = 1</span>
+    <h2>Основное тригонометрическое тождество</h2>
+    <p>Откуда оно берётся и как его применять.</p>
+    <span class="go">Открыть урок →</span>
+  </a>
+</div>
+</div>
 </body>
 </html>
