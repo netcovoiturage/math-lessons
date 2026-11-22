@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Многочлены</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>:root{
+  --paper:#F7FAFD; --grid:#DCE7F2; --ink:#1B2430; --muted:#5A6878;
+  --blue:#2457C5; --red:#D2353F; --green:#1E8A4C; --violet:#8A3FC2; --orange:#C46A0A; --margin:#E58A94;
+  --card:#FFFFFF; --line:#C9D6E4; --hl:#FFF3B0;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#17222C; --grid:#223241; --ink:#E8EEF4; --muted:#9AA9B8;
+    --blue:#6E9BFF; --red:#FF6F78; --green:#4CC384; --violet:#C08BFF; --orange:#F0A04B; --margin:#8A3E47;
+    --card:#1E2B37; --line:#33475A; --hl:#4A4320;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17222C; --grid:#223241; --ink:#E8EEF4; --muted:#9AA9B8;
+  --blue:#6E9BFF; --red:#FF6F78; --green:#4CC384; --violet:#C08BFF; --orange:#F0A04B; --margin:#8A3E47;
+  --card:#1E2B37; --line:#33475A; --hl:#4A4320;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;color:var(--ink);font:18px/1.6 "PT Sans",system-ui,sans-serif;background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px}
+.page{max-width:1000px;margin:0 auto;padding:24px 20px 64px 44px;position:relative}
+.page::before{content:"";position:absolute;left:24px;top:0;bottom:0;width:2px;background:var(--margin)}
+h1,h2,h3{font-family:Caveat,"Comic Sans MS",cursive;font-weight:700;line-height:1.1;margin:0}
+h1{font-size:clamp(2.3rem,6vw,3.4rem)}
+h2{font-size:2.2rem;margin:52px 0 12px}
+h3{font-size:1.6rem;margin:0 0 6px}
+p{max-width:68ch;margin:0 0 12px}
+.lead{color:var(--muted);font-size:1.1rem}
+.hint{color:var(--muted);font-size:.95rem}
+.b{color:var(--blue);font-weight:700}.r{color:var(--red);font-weight:700}.g{color:var(--green);font-weight:700}.v{color:var(--violet);font-weight:700}
+i{font-family:"Times New Roman",Georgia,serif;font-size:1.08em}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.8em;line-height:1.15;margin:0 2px}
+.fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 2px}
+.big{font-size:clamp(1.5rem,4.5vw,2rem);font-weight:700}
+.card{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:16px 20px}
+.sticky{background:var(--hl);border-radius:4px;padding:14px 20px;transform:rotate(-.5deg);box-shadow:2px 3px 0 var(--line);max-width:720px}
+.sticky p{margin:4px 0}.sticky ol{margin:6px 0 0;padding-left:22px}.sticky li{margin:4px 0}
+button{font:inherit;font-weight:700;cursor:pointer;border-radius:10px;padding:9px 16px;border:2px solid var(--ink);background:var(--card);color:var(--ink)}
+button.primary{background:var(--green);border-color:var(--green);color:#fff}
+button:disabled{opacity:.45;cursor:default}
+button:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+.sl{display:grid;grid-template-columns:2em 1fr 2em;gap:10px;align-items:center;margin:6px 0;max-width:360px}
+.sl output{font-weight:700;text-align:right}
+input[type=range]{width:100%;accent-color:var(--blue)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.steps{counter-reset:st;list-style:none;padding:0;margin:8px 0 0}
+.steps li{counter-increment:st;position:relative;padding:6px 0 6px 42px;border-bottom:1px dashed var(--line)}
+.steps li::before{content:counter(st);position:absolute;left:0;top:5px;width:30px;height:30px;border-radius:50%;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:Caveat,cursive;font-size:1.3rem;font-weight:700}
+.steps li.hidden{display:none}
+.steps li.show{animation:pop .35s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+.ex .q{font-size:1.35rem;font-weight:700}
+.ex .row{margin-top:8px}.ex button{padding:6px 12px;font-size:.95rem}
+.quiz .q{font-size:1.5rem;font-weight:700;margin:6px 0 10px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.opts button{font-size:1.25rem;font-weight:700;padding:12px;text-align:center}
+.opts button.ok{background:var(--green);border-color:var(--green);color:#fff}
+.opts button.no{border-color:var(--red);color:var(--red)}
+.fb{min-height:1.6em;font-weight:700;margin-top:10px}
+.fb.good{color:var(--green)}.fb.bad{color:var(--red)}
+.score{font-family:Caveat,cursive;font-size:1.6rem;font-weight:700}
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tabs button{padding:6px 12px;font-size:1rem}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:var(--card)}
+.mist{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.mist div{background:var(--card);border-left:5px solid var(--red);padding:14px 16px;border-radius:0 10px 10px 0}
+.mist .bad{color:var(--red);font-weight:700}
+.mist .bad::before{content:"✘ "}
+.mist b{color:var(--green)}
+.hw{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:12px 20px;margin-bottom:14px;break-inside:avoid;max-width:760px}
+.hw p{margin:0;font-size:1.2rem;line-height:1.9}
+.hw .ans{margin-top:4px;color:var(--muted);font-size:1rem}
+.tag{display:inline-block;font-family:"PT Sans",sans-serif;font-size:.85rem;font-weight:700;border:1.5px solid var(--muted);color:var(--muted);border-radius:20px;padding:0 10px;margin-left:8px;vertical-align:middle}
+@media (max-width:760px){.page{padding-left:36px}.page::before{left:18px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{
+  body{background:#fff;color:#000}
+  body.print-hw .page>*:not(#hwsec){display:none!important}
+  body.print-hw .page::before,body.print-hw #hwsec button{display:none!important}
+}
+</style></head><body>
+<main class="page">
+  <h1>Многочлены: стандартный вид, сложение и вычитание</h1>
+  <p class="lead">Многочлен — это сумма одночленов, например 3<i>x</i>² − 5<i>x</i> + 7. Каждый одночлен в нём называют <b>членом</b> многочлена.</p>
+
+  <h2>Часть 1. Подобные члены</h2>
+  <div class="sticky">
+    <p><b>Подобные члены</b> — у них <b>одинаковая буквенная часть</b> (те же буквы в тех же степенях). Числа могут быть любыми.</p>
+    <p class="b">3<i>x</i>²<i>y</i> и −7<i>x</i>²<i>y</i> — подобные ✔</p>
+    <p class="r">3<i>x</i>²<i>y</i> и 3<i>x</i><i>y</i>² — НЕ подобные ✘ (степени разные)</p>
+  </div>
+
+  <h2>Сортировщик подобных</h2>
+  <p>Подобные члены одного цвета. Нажимай кнопки по порядку: сначала собери подобные вместе, потом сложи их числа.</p>
+  <div class="card">
+    <div class="tabs" id="ptabs" role="group" aria-label="Пример"></div>
+    <div class="chips" id="chips" aria-live="polite"></div>
+    <div class="row"><button class="primary" id="bGroup">1. Собрать подобные</button><button class="primary" id="bSum">2. Сложить</button><button id="bReset">Сначала</button><button id="bRand">Случайный пример</button></div>
+    <p id="pmsg" class="hint" style="margin-top:10px"></p>
+  </div>
+
+  <h2>Стандартный вид многочлена</h2>
+  <div class="sticky" style="transform:rotate(.4deg)">
+    <ol><li>Каждый член приводим к <b>стандартному виду</b>: число впереди, буквы по алфавиту, одинаковые буквы перемножены.</li>
+    <li><b>Приводим подобные</b>: складываем их числа.</li>
+    <li>Обычно записываем члены <b>по убыванию степени</b>.</li></ol>
+  </div>
+
+  <h2>Разбираем задачи из учебника (С-25)</h2>
+  <div class="grid2">
+    <div class="card ex"><div class="q">а) <i>x</i>²<i>y</i> + <i>y</i> · <i>x</i> · <i>y</i></div><ol class="steps">
+      <li>Второй член к стандартному виду: <i>y</i>·<i>x</i>·<i>y</i> = <i>x</i><i>y</i>².</li>
+      <li class="hidden">Получили <i>x</i>²<i>y</i> + <i>x</i><i>y</i>².</li>
+      <li class="hidden">Подобные? <i>x</i>²<i>y</i> и <i>x</i><i>y</i>² — <span class="r">нет</span>: у <i>x</i> и <i>y</i> разные степени.</li>
+      <li class="hidden">Ответ: <span class="g"><i>x</i>²<i>y</i> + <i>x</i><i>y</i>²</span> — это уже стандартный вид.</li></ol>
+      <div class="row"><button class="primary nx">Дальше</button><button class="rs">Сначала</button></div></div>
+    <div class="card ex"><div class="q">в) 2<i>a</i> · <i>a</i>² · 3<i>b</i> + <i>a</i> · 8<i>c</i></div><ol class="steps">
+      <li>Первый член: 2·3 = 6, <i>a</i>·<i>a</i>² = <i>a</i>³ → <span class="b">6<i>a</i>³<i>b</i></span>.</li>
+      <li class="hidden">Второй член: <span class="b">8<i>a</i><i>c</i></span>.</li>
+      <li class="hidden">Подобных нет (разные буквы).</li>
+      <li class="hidden">Ответ: <span class="g">6<i>a</i>³<i>b</i> + 8<i>a</i><i>c</i></span></li></ol>
+      <div class="row"><button class="primary nx">Дальше</button><button class="rs">Сначала</button></div></div>
+    <div class="card ex"><div class="q">г) 8<i>x</i> · 3<i>y</i> · (−5<i>y</i>) − 7<i>x</i>² · (−4<i>y</i>)</div><ol class="steps">
+      <li>Первый член: 8·3·(−5) = −120, <i>y</i>·<i>y</i> = <i>y</i>² → <span class="b">−120<i>x</i><i>y</i>²</span>.</li>
+      <li class="hidden">Второй: −7·(−4) = +28 → <span class="b">+28<i>x</i>²<i>y</i></span>. Минус на минус — плюс!</li>
+      <li class="hidden"><i>x</i><i>y</i>² и <i>x</i>²<i>y</i> — не подобные.</li>
+      <li class="hidden">Ответ: <span class="g">−120<i>x</i><i>y</i>² + 28<i>x</i>²<i>y</i></span></li></ol>
+      <div class="row"><button class="primary nx">Дальше</button><button class="rs">Сначала</button></div></div>
+    <div class="card ex"><div class="q">Пример: 5<i>x</i>² − 3<i>x</i> + 2<i>x</i>² + 7<i>x</i> − 4</div><ol class="steps">
+      <li>Подобные: <span class="b">5<i>x</i>² и 2<i>x</i>²</span>, <span class="r">−3<i>x</i> и 7<i>x</i></span>.</li>
+      <li class="hidden">5 + 2 = 7 → <span class="b">7<i>x</i>²</span>.</li>
+      <li class="hidden">−3 + 7 = 4 → <span class="r">4<i>x</i></span>.</li>
+      <li class="hidden">Ответ: <span class="g">7<i>x</i>² + 4<i>x</i> − 4</span></li></ol>
+      <div class="row"><button class="primary nx">Дальше</button><button class="rs">Сначала</button></div></div>
+  </div>
+
+  <h2>Часть 2. Сложение и вычитание (С-26)</h2>
+  <div class="grid2">
+    <div class="card"><h3 class="g">Перед скобкой «+»</h3><p>Скобки просто убираем, знаки <b>не меняются</b>.</p><p class="big">+(<i>a</i> − <i>b</i>) = <i>a</i> − <i>b</i></p></div>
+    <div class="card"><h3 class="r">Перед скобкой «−»</h3><p>Убираем скобки и меняем знак <b>у каждого</b> члена внутри.</p><p class="big">−(<i>a</i> − <i>b</i>) = −<i>a</i> + <i>b</i></p></div>
+  </div>
+
+  <h2>Смотри, как меняются знаки</h2>
+  <p>Составим сумму и разность многочленов <span class="b">3<i>x</i>² − 2<i>x</i> + 5</span> и <span class="r"><i>x</i>² + 4<i>x</i> − 1</span>.</p>
+  <div class="tabs" id="otabs" role="group" aria-label="Действие"><button aria-pressed="true" data-o="1">Сумма</button><button aria-pressed="false" data-o="-1">Разность</button></div>
+  <div class="card" style="margin-top:12px">
+    <div class="big" id="ow" style="line-height:2"></div>
+    <div class="row"><button class="primary" id="oNext">Следующий шаг</button><button id="oReset">Сначала</button></div>
+    <p class="hint" id="ohint" style="margin-top:8px"></p>
+  </div>
+
+  <h2>Частые ошибки</h2>
+  <div class="mist">
+    <div><span class="bad">−(<i>x</i>² − 3<i>x</i>) = −<i>x</i>² − 3<i>x</i></span><br>Знак меняется у <b>каждого</b> члена: −<i>x</i>² + 3<i>x</i>.</div>
+    <div><span class="bad">3<i>x</i>² + 2<i>x</i> = 5<i>x</i>³</span><br>Это <b>не подобные</b>, складывать нельзя. И степени при сложении не меняются.</div>
+    <div><span class="bad">4<i>a</i> + 3<i>a</i> = 7<i>a</i>²</span><br>Складываем только числа, буквенная часть та же: <b>7<i>a</i></b>.</div>
+    <div><span class="bad"><i>x</i>²<i>y</i> и <i>x</i><i>y</i>² подобные</span><br>Степени у букв разные, значит <b>не подобные</b>.</div>
+  </div>
+
+  <h2>Тренажёр</h2>
+  <div class="card quiz" style="max-width:760px">
+    <div class="tabs" id="qtabs" role="group" aria-label="Тип"><button aria-pressed="true" data-t="like">Подобные</button><button aria-pressed="false" data-t="std">Стандартный вид</button><button aria-pressed="false" data-t="sub">Сумма и разность</button></div>
+    <div class="q" id="qq"></div><div class="opts" id="qo"></div>
+    <div class="fb" id="qf" aria-live="polite"></div>
+    <div class="row"><button class="primary" id="qn">Следующий пример</button><span class="score" id="qs">Верно: 0</span></div>
+  </div>
+
+  <section id="hwsec">
+    <h2>Домашнее задание</h2>
+    <p>Задания 1–5: приведите многочлен к стандартному виду. Задания 6–10: составьте сумму и разность многочленов (или упростите выражение) и приведите к стандартному виду.</p>
+    <div class="row" style="margin-bottom:18px"><button id="printHw">Распечатать задание</button></div>
+    <div id="hwlist"></div>
+  </section>
+</main>
+<script>(function(){
+const $=id=>document.getElementById(id);
+const rint=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const SUPD='⁰¹²³⁴⁵⁶⁷⁸⁹';
+const sup=n=>n===1?'':String(n).split('').map(d=>SUPD[d]).join('');
+const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a);
+const F=(p,q=1)=>{if(q<0){p=-p;q=-q}const g=gcd(p,q)||1;return [p/g,q/g];};
+function kabs(f,hasVars){const p=Math.abs(f[0]),q=f[1];if(q===1)return(p===1&&hasVars)?'':String(p);return `<span class="fr"><span>${p}</span><span>${q}</span></span>`;}
+function mono(m,lead=true){
+  const vs=Object.keys(m.v).filter(l=>m.v[l]).sort(), neg=m.k[0]<0;
+  const body=kabs(m.k,vs.length>0)+vs.map(l=>`<i>${l}</i>${sup(m.v[l])}`).join('');
+  return lead?(neg?'−':'')+body:(neg?' − ':' + ')+body;
+}
+function stepper(root){
+  const items=[...root.querySelectorAll('li')], next=root.querySelector('.nx'), reset=root.querySelector('.rs');
+  let i=0;
+  next.onclick=()=>{if(i<items.length-1){i++;items[i].classList.remove('hidden');items[i].classList.add('show');}if(i===items.length-1)next.disabled=true;};
+  reset.onclick=()=>{i=0;items.forEach((li,k)=>{li.classList.toggle('hidden',k>0);li.classList.remove('show')});next.disabled=false;};
+}
+function quiz(gen,ids){
+  let cur,score=0,answered=false;
+  function next(){
+    cur=gen();answered=false;
+    $(ids.q).innerHTML=cur.q;
+    const opts=shuffle([cur.a,...cur.d.slice(0,3)]);
+    $(ids.o).innerHTML=opts.map(o=>`<button data-c="${o===cur.a?1:0}">${o}</button>`).join('');
+    $(ids.o).querySelectorAll('button').forEach(b=>b.onclick=()=>{
+      if(answered)return;answered=true;
+      const ok=b.dataset.c==='1';
+      b.classList.add(ok?'ok':'no');
+      $(ids.o).querySelector('[data-c="1"]').classList.add('ok');
+      if(ok){score++;$(ids.s).textContent='Верно: '+score;}
+      $(ids.f).innerHTML=(ok?'Верно! ':'Неверно. ')+cur.e;$(ids.f).className='fb '+(ok?'good':'bad');
+    });
+    $(ids.f).textContent='';$(ids.f).className='fb';
+  }
+  $(ids.n).onclick=next;next();
+}
+function uniq(correct,cands,fallback){
+  const out=[];for(const c of cands){if(c!==correct&&!out.includes(c))out.push(c);}
+  let t=0;while(out.length<3&&t<20){const c=fallback(t++);if(c!==correct&&!out.includes(c))out.push(c);}
+  return out;
+}
+function printHw(){$('printHw').onclick=()=>{document.body.classList.add('print-hw');window.print();};
+  window.addEventListener('afterprint',()=>document.body.classList.remove('print-hw'));}
+document.querySelectorAll('.ex').forEach(stepper);
+document.head.insertAdjacentHTML('beforeend',`<style>
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0 4px;min-height:52px;font-size:1.35rem}
+.chip{padding:4px 12px;border-radius:10px;border:2.5px solid currentColor;font-weight:700;background:var(--card);animation:pop .35s ease-out}
+.c0{color:var(--blue)}.c1{color:var(--red)}.c2{color:var(--green)}.c3{color:var(--violet)}.c4{color:var(--orange)}
+.sgn{font-weight:700}.flip{background:var(--hl);border-radius:6px;padding:0 4px}
+</style>`);
+// term: {k:int, v:{}}
+const key=t=>Object.keys(t.v).filter(l=>t.v[l]).sort().map(l=>l+t.v[l]).join('');
+const tm=(k,v)=>({k:F(k),v});
+function polyHtml(ts,cls){
+  if(!ts.length)return '0';
+  return ts.map((t,i)=>`<span class="chip ${cls?cls(t):''}">${mono(t,true)}</span>`).join(' ');
+}
+const PRE=[
+  [[5,{x:2}],[-3,{x:1}],[2,{x:2}],[7,{x:1}],[-4,{}]],
+  [[4,{a:1,b:1}],[-2,{a:2}],[3,{b:2}],[-6,{a:1,b:1}],[5,{a:2}],[1,{b:2}]],
+  [[1,{x:2,y:1}],[2,{x:1,y:2}],[-3,{x:2,y:1}],[4,{x:1,y:2}],[6,{}],[-1,{}]]
+];
+let terms,stage,colorOf;
+function load(arr){
+  terms=arr.map(([k,v])=>tm(k,v));stage=0;
+  colorOf={};let c=0;terms.forEach(t=>{const k=key(t);if(!(k in colorOf))colorOf[k]=c++%5;});
+  renderP();
+}
+function renderP(){
+  $('chips').innerHTML=polyHtml(terms,t=>'c'+colorOf[key(t)]);
+  $('bGroup').disabled=stage!==0;$('bSum').disabled=stage!==1;
+  $('pmsg').innerHTML=['Найди одинаковые цвета — это подобные члены.','Подобные стоят рядом. Теперь складываем их числа (знак — часть числа!).','Готово! Это стандартный вид многочлена.'][stage];
+}
+$('bGroup').onclick=()=>{const order=Object.keys(colorOf);terms=order.flatMap(k=>terms.filter(t=>key(t)===k));stage=1;renderP();};
+$('bSum').onclick=()=>{
+  const m={};terms.forEach(t=>{const k=key(t);if(!m[k])m[k]={k:[0,1],v:t.v};m[k].k=F(m[k].k[0]+t.k[0]);});
+  terms=Object.values(m).filter(t=>t.k[0]!==0);
+  const deg=t=>Object.values(t.v).reduce((a,b)=>a+b,0);
+  terms.sort((a,b)=>deg(b)-deg(a));stage=2;renderP();
+};
+let presetI=0;
+const pt=$('ptabs');
+PRE.forEach((p,i)=>{const b=document.createElement('button');b.textContent='Пример '+(i+1);b.onclick=()=>{presetI=i;mark();load(PRE[i]);};pt.appendChild(b);});
+function mark(){[...pt.children].forEach((b,i)=>b.setAttribute('aria-pressed',i===presetI));}
+$('bReset').onclick=()=>load(PRE[presetI]);
+$('bRand').onclick=()=>{
+  const pool=[{x:2},{x:1},{},{a:1,b:1},{y:2}];const used=shuffle([...pool]).slice(0,3);
+  const arr=[];used.forEach(v=>{const n=rint(2,3);for(let i=0;i<n;i++)arr.push([rint(1,9)*(Math.random()<.4?-1:1),v]);});
+  presetI=-1;mark();load(shuffle(arr));
+};
+mark();load(PRE[0]);
+
+// sum/diff animation
+const PA=[tm(3,{x:2}),tm(-2,{x:1}),tm(5,{})], PB=[tm(1,{x:2}),tm(4,{x:1}),tm(-1,{})];
+let op=1,ostep=0;
+const plain=(ts,lead=true)=>ts.map((t,i)=>mono(t,i===0&&lead)).join('');
+function oRender(){
+  const sign=op>0?'+':'−';
+  const B2=PB.map(t=>tm(t.k[0]*op,t.v));
+  const res=PA.map((t,i)=>tm(t.k[0]+B2[i].k[0],t.v)).filter(t=>t.k[0]);
+  const lines=[
+    `(<span class="b">${plain(PA)}</span>) ${sign} (<span class="r">${plain(PB)}</span>)`,
+    `= <span class="b">${plain(PA)}</span>${B2.map(t=>`<span class="${op<0?'flip':''} r">${mono(t,false)}</span>`).join('')}`,
+    `= <span class="c0">${mono(PA[0])}${mono(B2[0],false)}</span> <span class="c1">${mono(PA[1],false)}${mono(B2[1],false)}</span> <span class="c2">${mono(PA[2],false)}${mono(B2[2],false)}</span>`,
+    `= <span class="g">${plain(res)}</span>`
+  ];
+  const hints=['Записали сумму или разность, каждый многочлен в скобках.',
+    op>0?'Перед скобкой «+» — раскрываем, знаки не меняем.':'Перед скобкой «−» — раскрываем и меняем знак у <b>каждого</b> члена (выделено жёлтым).',
+    'Подобные члены одного цвета — объединяем.','Складываем числа подобных. Готово!'];
+  $('ow').innerHTML=lines.slice(0,ostep+1).map(l=>`<div>${l}</div>`).join('');
+  $('ohint').innerHTML=hints[ostep];$('oNext').disabled=ostep>=3;
+}
+$('oNext').onclick=()=>{ostep++;oRender();};$('oReset').onclick=()=>{ostep=0;oRender();};
+$('otabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{op=+b.dataset.o;ostep=0;$('otabs').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));oRender();});
+oRender();
+
+// quiz
+let qtype='like';
+const PARTS=[{x:2,y:1},{x:1,y:2},{x:2},{x:3},{x:1,y:1},{a:2,b:1},{a:1,b:2},{a:3}];
+function gen(){
+  if(qtype==='like'){
+    const v=rnd(PARTS);const k=rint(2,9)*(Math.random()<.4?-1:1);
+    const others=shuffle(PARTS.filter(p=>JSON.stringify(p)!==JSON.stringify(v))).slice(0,3);
+    // prefer confusing ones: same letters swapped
+    const a=mono(tm(rint(2,9)*(Math.random()<.5?-1:1),v));
+    return {q:`Какой одночлен подобен ${mono(tm(k,v))}?`,a,d:others.map(p=>mono(tm(k,p))),e:'У подобных одинаковая буквенная часть: те же буквы в тех же степенях. Числа могут отличаться.'};
+  }
+  if(qtype==='std'){
+    const a1=rint(2,9),b1=rint(1,9)*(Math.random()<.5?-1:1),a2=rint(1,9)*(Math.random()<.5?-1:1),b2=rint(1,9)*(Math.random()<.5?-1:1),c=rint(1,9);
+    const fix=(A,B)=>{if(A+B===0)return [A,B+1];return [A,B];};
+    const [p1,p2]=fix(a1,a2),[q1,q2]=fix(b1,b2);
+    const ts=[tm(p1,{x:2}),tm(q1,{x:1}),tm(p2,{x:2}),tm(c,{}),tm(q2,{x:1})];
+    const r=[tm(p1+p2,{x:2}),tm(q1+q2,{x:1}),tm(c,{})];
+    const a=plain(r);
+    const d=[plain([tm(p1+p2,{x:4}),tm(q1+q2,{x:2}),tm(c,{})]),plain([tm(p1-p2,{x:2}),tm(q1+q2,{x:1}),tm(c,{})]),plain([tm(p1+p2,{x:2}),tm(q1-q2,{x:1}),tm(c,{})]),plain([tm(p1+p2+q1+q2,{x:2}),tm(c,{})])];
+    return {q:plain(ts),a,d:uniq(a,d,t=>plain([tm(p1+p2+t+1,{x:2}),tm(q1+q2,{x:1}),tm(c,{})])),e:`<i>x</i>²: ${p1}+${p2} = ${p1+p2}; <i>x</i>: ${q1}+${q2} = ${q1+q2}.`.replace(/\+-/g,'−').replace(/-/g,'−')};
+  }
+  const A=[rint(1,6)*(Math.random()<.3?-1:1),rint(1,6)*(Math.random()<.5?-1:1),rint(1,9)*(Math.random()<.5?-1:1)];
+  const B=[rint(1,6),rint(1,6)*(Math.random()<.5?-1:1),rint(1,9)*(Math.random()<.5?-1:1)];
+  const o=Math.random()<.7?-1:1;
+  const V=[{x:2},{x:1},{}];
+  const P=c=>plain(c.map((k,i)=>tm(k,V[i])).filter(t=>t.k[0]));
+  const res=A.map((a,i)=>a+o*B[i]);
+  const a=P(res);
+  const d=[P(A.map((x,i)=>x-o*B[i])),P(A.map((x,i)=>i===0?x+o*B[i]:x+B[i])),P(A.map((x,i)=>i===0?x+o*B[i]:x-o*B[i])),P([res[0]+1,res[1],res[2]])];
+  return {q:`(${P(A)}) ${o>0?'+':'−'} (${P(B)})`,a,d:uniq(a,d,t=>P([res[0],res[1]+t+1,res[2]])),
+    e:o<0?'Перед второй скобкой минус — меняем знаки у всех её членов, потом приводим подобные.':'Перед скобкой плюс — знаки не меняются, приводим подобные.'};
+}
+quiz(gen,{q:'qq',o:'qo',f:'qf',s:'qs',n:'qn'});
+$('qtabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{qtype=b.dataset.t;$('qtabs').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));$('qn').click();});
+
+// homework
+const HW=[
+ ['простой','5<i>x</i> + 3<i>y</i> − 2<i>x</i> + 4<i>y</i>'],
+ ['простой','7<i>a</i>² − 3<i>a</i> + 2<i>a</i>² + 8<i>a</i> − 1'],
+ ['средний','<i>x</i> · 2<i>y</i> · <i>x</i> + 3<i>x</i>²<i>y</i> − <i>y</i> · 4<i>x</i>'],
+ ['средний','3<i>a</i> · 2<i>b</i> − 5<i>b</i> · <i>a</i> + <i>a</i>² · 4 − 2<i>a</i> · <i>a</i>'],
+ ['сложный','6<i>m</i> · (−2<i>n</i>) · <i>m</i> − 3<i>m</i>² · (−5<i>n</i>) + 4<i>m</i><i>n</i>²'],
+ ['простой','Составьте сумму и разность многочленов: 4<i>x</i> + 7 и 2<i>x</i> − 3'],
+ ['средний','Составьте сумму и разность многочленов: 3<i>a</i>² − 5<i>a</i> + 2 и <i>a</i>² + 2<i>a</i> − 6'],
+ ['средний','Упростите: (5<i>x</i>² − 2<i>x</i><i>y</i> + <i>y</i>²) − (3<i>x</i>² + 4<i>x</i><i>y</i> − 2<i>y</i>²)'],
+ ['сложный','Упростите: (2<i>b</i>³ − <i>b</i>) − (<i>b</i>³ + 3<i>b</i>² − 4<i>b</i>) + (5<i>b</i>² − 2)'],
+ ['сложный','Найдите многочлен <i>P</i>, если <i>P</i> + (3<i>x</i>² − 4<i>x</i> + 1) = 5<i>x</i>² + <i>x</i> − 7']
+];
+$('hwlist').innerHTML=HW.map(([t,q],i)=>`<div class="hw"><h3>Задание ${i+1}<span class="tag">${t}</span></h3><p>${q}</p><p class="ans">Ответ: ________________________</p></div>`).join('');
+printHw();
+
+})();</script></body></html>

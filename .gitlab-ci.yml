@@ -1,0 +1,13 @@
+# Static site on GitLab Pages: just copies the HTML files, no build tooling.
+pages:
+  stage: deploy
+  image: busybox:latest
+  script:
+    - mkdir public
+    - cp *.html public/
+  pages: true
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

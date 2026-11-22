@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>График квадратичной функции</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7FAFD; --grid:#DCE7F2; --ink:#1B2430; --muted:#5A6878;
+  --curve:#2457C5; --vert:#D2353F; --root:#1E8A4C; --oy:#8A3FC2; --margin:#E58A94;
+  --card:#FFFFFF; --line:#C9D6E4; --hl:#FFF3B0; --ghost:#9DB0C4;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#17222C; --grid:#223241; --ink:#E8EEF4; --muted:#9AA9B8;
+    --curve:#6E9BFF; --vert:#FF6F78; --root:#4CC384; --oy:#C08BFF; --margin:#8A3E47;
+    --card:#1E2B37; --line:#33475A; --hl:#4A4320; --ghost:#4F6578;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17222C; --grid:#223241; --ink:#E8EEF4; --muted:#9AA9B8;
+  --curve:#6E9BFF; --vert:#FF6F78; --root:#4CC384; --oy:#C08BFF; --margin:#8A3E47;
+  --card:#1E2B37; --line:#33475A; --hl:#4A4320; --ghost:#4F6578;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0; color:var(--ink); font:18px/1.6 "PT Sans",system-ui,sans-serif;
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+.page{max-width:1020px;margin:0 auto;padding:24px 20px 64px 44px;position:relative}
+.page::before{content:"";position:absolute;left:24px;top:0;bottom:0;width:2px;background:var(--margin)}
+h1,h2,h3{font-family:Caveat,"Comic Sans MS",cursive;font-weight:700;line-height:1.1;margin:0}
+h1{font-size:clamp(2.4rem,6vw,3.6rem)}
+h2{font-size:2.2rem;margin:56px 0 12px}
+h3{font-size:1.7rem;margin:0 0 6px}
+p{max-width:68ch;margin:0 0 12px}
+.lead{color:var(--muted);font-size:1.1rem}
+.hint{color:var(--muted);font-size:.95rem}
+.cv{color:var(--curve);font-weight:700}.vx{color:var(--vert);font-weight:700}.rt{color:var(--root);font-weight:700}.oy{color:var(--oy);font-weight:700}
+.big{font-family:Caveat,cursive;font-size:clamp(2.2rem,6vw,3.2rem);font-weight:700;line-height:1.1;margin:6px 0}
+
+.board{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px}
+svg{display:block;width:100%;height:auto}
+.gl{stroke:var(--grid);stroke-width:1}
+.ax{stroke:var(--ink);stroke-width:1.3}
+.tl{fill:var(--muted)}
+.curve{fill:none;stroke:var(--curve);stroke-width:3;stroke-linecap:round}
+.ghost{fill:none;stroke:var(--ghost);stroke-width:2;stroke-dasharray:5 5}
+.sym{stroke:var(--vert);stroke-width:1.5;stroke-dasharray:4 4}
+
+button{font:inherit;font-weight:700;cursor:pointer;border-radius:10px;padding:9px 16px;border:2px solid var(--ink);background:var(--card);color:var(--ink)}
+button.primary{background:var(--root);border-color:var(--root);color:#fff}
+button.sel{background:var(--curve);border-color:var(--curve);color:#fff}
+button:disabled{opacity:.45;cursor:default}
+button:focus-visible,input:focus-visible{outline:3px solid var(--curve);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+
+/* lab */
+.levels{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 14px}
+.levels button{padding:6px 12px;font-size:1rem}
+.levels button[aria-pressed="true"]{background:var(--ink);color:var(--card)}
+.lab{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px;align-items:start}
+.sl{display:grid;grid-template-columns:2.2em 1fr 3em;gap:10px;align-items:center;margin:6px 0}
+.sl b{font-size:1.2rem}
+.sl output{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--curve)}
+.info{border-collapse:collapse;width:100%;margin-top:12px}
+.info td{padding:6px 4px;border-bottom:1px dashed var(--line);vertical-align:top}
+.info td:last-child{text-align:right;font-weight:700}
+.warn{background:var(--hl);padding:8px 12px;border-radius:8px;margin-top:10px}
+.vtable{border-collapse:collapse;margin-top:10px;background:var(--card)}
+.vtable td,.vtable th{border:1.5px solid var(--line);padding:4px 10px;text-align:center}
+
+/* steps */
+.steps{counter-reset:st;list-style:none;padding:0;margin:0}
+.steps li{counter-increment:st;position:relative;padding:8px 0 8px 48px;border-bottom:1px dashed var(--line)}
+.steps li::before{content:counter(st);position:absolute;left:0;top:6px;width:34px;height:34px;border-radius:50%;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:Caveat,cursive;font-size:1.4rem;font-weight:700}
+.steps li.hidden{display:none}
+.steps li.show{animation:pop .35s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
+
+.sticky{background:var(--hl);border-radius:4px;padding:14px 20px;transform:rotate(-.5deg);box-shadow:2px 3px 0 var(--line)}
+.sticky p{margin:4px 0}
+
+/* signs practice */
+.sg{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.sg>span{width:2em;font-size:1.3rem;font-weight:700}
+.sg button{padding:5px 12px}
+.fb{min-height:1.6em;font-weight:700;margin-top:10px}
+.fb.good{color:var(--root)}.fb.bad{color:var(--vert)}
+.expl{margin:8px 0 0;padding-left:20px;color:var(--muted)}
+.score{font-family:Caveat,cursive;font-size:1.6rem;font-weight:700}
+
+/* mistakes */
+.mist{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.mist div{background:var(--card);border-left:5px solid var(--vert);padding:14px 16px;border-radius:0 10px 10px 0}
+.mist s{color:var(--vert)}
+.mist b{color:var(--root)}
+
+/* homework */
+.hw{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:22px;break-inside:avoid}
+.hw .graphs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:10px 0}
+.hw .graphs figure{margin:0;border:1.5px solid var(--line);border-radius:10px;padding:6px;text-align:center}
+.hw figcaption{font-weight:700;font-size:1.2rem}
+.opts{display:flex;flex-wrap:wrap;gap:8px 28px;margin:6px 0 10px;font-size:1.15rem}
+.ansgrid{border-collapse:collapse}
+.ansgrid td,.ansgrid th{border:1.5px solid var(--ink);width:3em;height:2.2em;text-align:center;padding:0}
+.ansgrid input,.hw input.num{font:inherit;font-weight:700;text-align:center;border:0;background:transparent;color:var(--ink);width:100%;height:2.1em}
+.hw input.num{border:2px solid var(--line);border-radius:8px;width:4.2em;background:var(--paper)}
+.tag{display:inline-block;font-size:.85rem;font-weight:700;border:1.5px solid var(--muted);color:var(--muted);border-radius:20px;padding:0 10px;margin-left:8px;vertical-align:middle}
+.hidden-g{display:none}
+
+@media (max-width:760px){
+  .lab,.two{grid-template-columns:1fr}
+  .page{padding-left:36px}.page::before{left:18px}
+  .hw .graphs{grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{
+  body{background:#fff;color:#000}
+  body.print-hw .page>*:not(#hwsec){display:none!important}
+  body.print-hw .page::before{display:none}
+  body.print-hw #hwsec button,body.print-hw .fb{display:none!important}
+  body.print-hw .hidden-g{display:none!important}
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <h1>График квадратичной функции</h1>
+  <p class="lead">Парабола шаг за шагом: от самой простой y = x² до общего вида y = ax² + bx + c. Выбирай уровень и двигай ползунки — смотри, что происходит с графиком.</p>
+
+  <div class="levels" id="levels" role="group" aria-label="Уровень"></div>
+
+  <section class="lab">
+    <div class="board"><svg id="labsvg" role="img" aria-label="График параболы"></svg>
+      <p class="hint" style="margin:6px 4px 0">Пунктир — график y = x² для сравнения.</p>
+    </div>
+    <div>
+      <div class="big" id="formula"></div>
+      <p id="ltxt"></p>
+      <div id="sliders"></div>
+      <div id="extra"></div>
+      <table class="info" id="info"></table>
+    </div>
+  </section>
+
+  <h2>Как построить параболу: алгоритм</h2>
+  <p>Построим график <b>y = x² − 4x + 3</b>. Нажимай «Следующий шаг» — на графике будет появляться то, что мы нашли.</p>
+  <div class="two">
+    <div>
+      <ol class="steps" id="alg">
+        <li>Смотрим на a. Здесь a = 1 &gt; 0, значит <b>ветви вверх</b>.</li>
+        <li class="hidden">Вершина: x₀ = −b / (2a) = 4 / 2 = 2. Подставляем: y₀ = 2² − 4·2 + 3 = −1. <span class="vx">Вершина (2; −1)</span>.</li>
+        <li class="hidden">Через вершину проводим <span class="vx">ось симметрии x = 2</span>.</li>
+        <li class="hidden">Пересечение с осью Oy: ставим x = 0, получаем y = c = 3. <span class="oy">Точка (0; 3)</span>.</li>
+        <li class="hidden">Нули функции: x² − 4x + 3 = 0, корни <span class="rt">x = 1 и x = 3</span>.</li>
+        <li class="hidden">Точку (0; 3) отражаем относительно оси симметрии: получаем <span class="oy">(4; 3)</span>.</li>
+        <li class="hidden">Соединяем точки плавной линией. <span class="cv">Парабола готова!</span></li>
+      </ol>
+      <div class="row"><button class="primary" id="algNext">Следующий шаг</button><button id="algReset">Сначала</button></div>
+    </div>
+    <div class="board"><svg id="algsvg" role="img" aria-label="Построение параболы по шагам"></svg></div>
+  </div>
+
+  <h2>Знаки a, b и c по графику</h2>
+  <div class="sticky">
+    <p><b>a</b>: ветви вверх → a &gt; 0; ветви вниз → a &lt; 0.</p>
+    <p><b>c</b>: где парабола пересекает ось Oy. Выше нуля → c &gt; 0, ниже → c &lt; 0, в начале координат → c = 0.</p>
+    <p><b>b</b>: смотрим, где вершина. Вершина справа от Oy → у a и b <b>разные</b> знаки. Слева → <b>одинаковые</b>. На оси Oy → b = 0.</p>
+  </div>
+  <div class="two" style="margin-top:20px">
+    <div class="board"><svg id="sgsvg" role="img" aria-label="График для определения знаков"></svg></div>
+    <div>
+      <p>Определи знаки коэффициентов для графика y = ax² + bx + c.</p>
+      <div class="sg" data-k="a"><span>a</span><button data-v="1">&gt; 0</button><button data-v="-1">&lt; 0</button></div>
+      <div class="sg" data-k="b"><span>b</span><button data-v="1">&gt; 0</button><button data-v="-1">&lt; 0</button><button data-v="0">= 0</button></div>
+      <div class="sg" data-k="c"><span>c</span><button data-v="1">&gt; 0</button><button data-v="-1">&lt; 0</button><button data-v="0">= 0</button></div>
+      <div class="row"><button class="primary" id="sgCheck">Проверить</button><button id="sgNew">Новый график</button></div>
+      <div class="fb" id="sgFb" aria-live="polite"></div>
+      <ul class="expl" id="sgEx"></ul>
+      <div class="score" id="sgScore">Верно: 0</div>
+    </div>
+  </div>
+
+  <h2>Частые ошибки</h2>
+  <div class="mist">
+    <div><s>y = (x − 3)² сдвинут влево</s><br>Нет, <b>вправо</b> на 3. Минус в скобке — сдвиг вправо.</div>
+    <div><s>a &lt; 0 — ветви вверх</s><br>Наоборот: минус перед x² — ветви <b>вниз</b>.</div>
+    <div><s>x₀ = b / (2a)</s><br>Не забывай минус: <b>x₀ = −b / (2a)</b>.</div>
+    <div><s>c — это вершина</s><br>c — это <b>пересечение с осью Oy</b>. Вершиной (0; c) будет только при b = 0.</div>
+  </div>
+
+  <section id="hwsec">
+    <h2>Домашнее задание</h2>
+    <p>Задания 1–7 — в формате ОГЭ (задание 11): под каждой буквой запиши номер подходящей формулы. Задания 8–10 — построение графика.</p>
+    <div class="row" style="margin-bottom:18px"><button id="printHw">Распечатать задание</button></div>
+    <div id="hwlist"></div>
+  </section>
+</main>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const fmt=v=>{const r=Math.round(v*100)/100;return (Object.is(r,-0)?0:r).toString().replace('.',',').replace('-','−');};
+const approx=v=>(Math.abs(v-Math.round(v*100)/100)>1e-9?'≈ ':'')+fmt(v);
+
+// ---------- graph helpers ----------
+function frame(svg,o,inner){
+  const {x0,x1,y0,y1,u,id}=o, st=o.step||1, fs=o.fs||Math.max(7,u*0.5);
+  let s=`<defs><marker id="ar-${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--ink)"/></marker>
+  <clipPath id="cl-${id}"><rect x="${x0*u}" y="${-y1*u}" width="${(x1-x0)*u}" height="${(y1-y0)*u}"/></clipPath></defs>`;
+  for(let i=Math.ceil(x0);i<=x1;i++) s+=`<line class="gl" x1="${i*u}" y1="${-y1*u}" x2="${i*u}" y2="${-y0*u}"/>`;
+  for(let j=Math.ceil(y0);j<=y1;j++) s+=`<line class="gl" x1="${x0*u}" y1="${-j*u}" x2="${x1*u}" y2="${-j*u}"/>`;
+  s+=`<line class="ax" x1="${x0*u}" y1="0" x2="${(x1+0.6)*u}" y2="0" marker-end="url(#ar-${id})"/>`;
+  s+=`<line class="ax" x1="0" y1="${-y0*u}" x2="0" y2="${-(y1+0.6)*u}" marker-end="url(#ar-${id})"/>`;
+  for(let i=Math.ceil(x0);i<=x1;i++) if(i&&i%st===0) s+=`<text class="tl" font-size="${fs}" x="${i*u}" y="${fs+3}" text-anchor="middle">${String(i).replace('-','−')}</text>`;
+  for(let j=Math.ceil(y0);j<=y1;j++) if(j&&j%st===0) s+=`<text class="tl" font-size="${fs}" x="-4" y="${-j*u+fs/3}" text-anchor="end">${String(j).replace('-','−')}</text>`;
+  s+=`<text class="tl" font-size="${fs}" x="-4" y="${fs+2}" text-anchor="end">0</text>`;
+  s+=`<text class="tl" font-size="${fs+1}" font-style="italic" x="${(x1+0.6)*u}" y="${-fs*0.6}" text-anchor="end">x</text>`;
+  s+=`<text class="tl" font-size="${fs+1}" font-style="italic" x="${fs*0.6}" y="${-(y1+0.6)*u+fs*0.4}">y</text>`;
+  s+=`<g clip-path="url(#cl-${id})">${inner.clip||''}</g>${inner.top||''}`;
+  svg.setAttribute('viewBox',`${(x0-0.7)*u} ${-(y1+1.1)*u} ${(x1-x0+1.6)*u} ${(y1-y0+2)*u}`);
+  svg.innerHTML=s;
+}
+function curve(fn,o,cls){
+  let d='',pen=false;
+  for(let x=o.x0;x<=o.x1+1e-9;x+=0.02){
+    const y=fn(x);
+    if(y<o.y0-3||y>o.y1+3){pen=false;continue;}
+    d+=(pen?'L':'M')+(x*o.u).toFixed(1)+' '+(-y*o.u).toFixed(1);pen=true;
+  }
+  return `<path class="${cls||'curve'}" d="${d}"/>`;
+}
+function pt(x,y,o,color,label,pos){
+  const fs=Math.max(8,o.u*0.5), r=Math.max(3,o.u*0.2);
+  let s=`<circle cx="${x*o.u}" cy="${-y*o.u}" r="${r}" fill="${color}" stroke="var(--card)" stroke-width="1.5"/>`;
+  if(label){const dx=pos==='l'?-6:6, an=pos==='l'?'end':'start', dy=pos==='b'?fs+4:-6;
+    s+=`<text x="${x*o.u+dx}" y="${-y*o.u+dy}" font-size="${fs}" font-weight="700" fill="${color}" text-anchor="${an}" paint-order="stroke" stroke="var(--card)" stroke-width="3">${label}</text>`;}
+  return s;
+}
+const P=(a,b,c)=>x=>a*x*x+b*x+c;
+
+// ---------- lab ----------
+const S={a:1,b:-4,c:3,m:2,n:-1,lv:0,pts:false};
+const RNG={a:[-3,3,0.5],b:[-8,8,1],c:[-6,6,1],m:[-5,5,1],n:[-5,5,1]};
+const LV=[
+  {name:'y = x²',sl:[],txt:'Самая простая парабола. Вершина в точке (0; 0), ветви направлены вверх. График симметричен относительно оси Oy.'},
+  {name:'y = ax²',sl:['a'],txt:'Число a отвечает за направление и ширину. a &gt; 0 — ветви вверх, a &lt; 0 — вниз. Чем больше |a|, тем уже парабола; чем меньше — тем шире.'},
+  {name:'y = x² + c',sl:['c'],txt:'Число c поднимает или опускает параболу. Плюс — вверх, минус — вниз. Вершина в точке (0; c).'},
+  {name:'y = (x − m)²',sl:['m'],txt:'Сдвиг влево-вправо. Внимание: y = (x − 2)² сдвинут <b>вправо</b> на 2, а y = (x + 2)² — <b>влево</b>. Знак «наоборот»!'},
+  {name:'y = a(x − m)² + n',sl:['a','m','n'],txt:'Собираем всё вместе: вершина в точке (m; n), а a отвечает за направление и ширину ветвей.'},
+  {name:'y = ax² + bx + c',sl:['a','b','c'],txt:'Общий вид. Вершину находим по формуле x₀ = −b / (2a), а y₀ — подстановкой. c — точка пересечения с осью Oy.'}
+];
+const lvBox=$('levels');
+LV.forEach((l,i)=>{const b=document.createElement('button');b.textContent=(i+1)+'. '+l.name;b.onclick=()=>{S.lv=i;buildSliders();update();};lvBox.appendChild(b);});
+
+function poly(terms){let s='';terms.forEach(([k,v])=>{if(!k)return;const ab=Math.abs(k),t=(ab===1&&v)?v:fmt(ab)+v;s+=s?(k<0?' − ':' + ')+t:(k<0?'−':'')+t;});return s||'0';}
+function sq(m){return m===0?'x²':`(x ${m>0?'−':'+'} ${fmt(Math.abs(m))})²`;}
+function std(){const{a,b,c,m,n,lv}=S;
+  return [[1,0,0],[a,0,0],[1,0,c],[1,-2*m,m*m],[a,-2*a*m,a*m*m+n],[a,b,c]][lv];}
+function formula(){const{a,b,c,m,n,lv}=S;
+  switch(lv){
+    case 0:return 'y = x²';
+    case 1:return 'y = '+poly([[a,'x²']]);
+    case 2:return 'y = '+poly([[1,'x²'],[c,'']]);
+    case 3:return 'y = '+sq(m);
+    case 4:{if(!a)return 'y = '+fmt(n);const k=a===1?'':a===-1?'−':fmt(a);return 'y = '+k+sq(m)+(n?(n>0?' + ':' − ')+fmt(Math.abs(n)):'');}
+    case 5:return 'y = '+poly([[a,'x²'],[b,'x'],[c,'']]);
+  }}
+function buildSliders(){
+  [...lvBox.children].forEach((b,i)=>b.setAttribute('aria-pressed',i===S.lv));
+  const l=LV[S.lv];
+  $('ltxt').innerHTML=l.txt;
+  $('sliders').innerHTML=l.sl.map(k=>{const[mn,mx,st]=RNG[k];return `<label class="sl"><b>${k}</b><input type="range" min="${mn}" max="${mx}" step="${st}" value="${S[k]}" data-k="${k}"><output id="o-${k}">${fmt(S[k])}</output></label>`;}).join('');
+  $('sliders').querySelectorAll('input').forEach(inp=>inp.oninput=()=>{S[inp.dataset.k]=+inp.value;$('o-'+inp.dataset.k).textContent=fmt(+inp.value);update();});
+  $('extra').innerHTML=S.lv===0?`<button id="ptsBtn">${S.pts?'Скрыть точки':'Показать точки'}</button><div id="vt"></div>`:'';
+  if(S.lv===0)$('ptsBtn').onclick=()=>{S.pts=!S.pts;buildSliders();update();};
+}
+const LO={x0:-7,x1:7,y0:-7,y1:9,u:20,id:'lab'};
+function update(){
+  const[A,B,C]=std(), fn=P(A,B,C);
+  $('formula').textContent=formula();
+  let clip='',top='';
+  if(S.lv>0)clip+=curve(P(1,0,0),LO,'ghost');
+  clip+=curve(fn,LO,'curve');
+  let rows='';
+  if(A===0){
+    rows=`<tr><td colspan="2"><div class="warn">При a = 0 это уже не парабола, а прямая.</div></td></tr>`;
+  }else{
+    const x0=-B/(2*A), y0=fn(x0), D=B*B-4*A*C;
+    clip+=`<line class="sym" x1="${x0*LO.u}" y1="${-LO.y1*LO.u}" x2="${x0*LO.u}" y2="${-LO.y0*LO.u}"/>`;
+    let roots;
+    if(D<-1e-9)roots='нет';
+    else if(Math.abs(D)<1e-9){roots='x = '+approx(x0);top+=pt(x0,0,LO,'var(--root)');}
+    else{const r1=(-B-Math.sqrt(D))/(2*A),r2=(-B+Math.sqrt(D))/(2*A),lo=Math.min(r1,r2),hi=Math.max(r1,r2);
+      roots='x = '+approx(lo)+' и x = '+approx(hi);
+      [lo,hi].forEach(r=>{if(r>=LO.x0&&r<=LO.x1)top+=pt(r,0,LO,'var(--root)');});}
+    if(C<=LO.y1&&C>=LO.y0&&Math.abs(x0)>0.01)top+=pt(0,C,LO,'var(--oy)');
+    if(y0<=LO.y1&&y0>=LO.y0&&x0>=LO.x0&&x0<=LO.x1)top+=pt(x0,y0,LO,'var(--vert)',`(${fmt(x0)}; ${fmt(y0)})`,x0<0?'l':'r');
+    rows=`<tr><td>Ветви</td><td>${A>0?'вверх ↑ (a &gt; 0)':'вниз ↓ (a &lt; 0)'}</td></tr>
+      <tr><td><span class="vx">Вершина</span></td><td class="vx">(${approx(x0)}; ${approx(y0)})</td></tr>
+      <tr><td>Ось симметрии</td><td>x = ${approx(x0)}</td></tr>
+      <tr><td><span class="oy">Пересечение с Oy</span></td><td class="oy">(0; ${fmt(C)})</td></tr>
+      <tr><td><span class="rt">Нули (пересечение с Ox)</span></td><td class="rt">${roots}</td></tr>`;
+  }
+  if(S.lv===0&&S.pts){
+    for(let x=-3;x<=3;x++)top+=pt(x,x*x,LO,'var(--vert)');
+    $('vt').innerHTML=`<table class="vtable"><tr><th>x</th>${[-3,-2,-1,0,1,2,3].map(x=>`<td>${String(x).replace('-','−')}</td>`).join('')}</tr><tr><th>y</th>${[-3,-2,-1,0,1,2,3].map(x=>`<td>${x*x}</td>`).join('')}</tr></table><p class="hint">Отмечаем точки и соединяем плавной линией. Получается парабола.</p>`;
+  }
+  frame($('labsvg'),LO,{clip,top});
+  $('info').innerHTML=rows;
+}
+buildSliders();update();
+
+// ---------- algorithm ----------
+const AO={x0:-2,x1:6,y0:-3,y1:7,u:30,id:'alg'};
+const algFn=P(1,-4,3);
+const layers=[
+  ()=>({}),
+  ()=>({top:pt(2,-1,AO,'var(--vert)','(2; −1)','r')}),
+  ()=>({clip:`<line class="sym" x1="${2*AO.u}" y1="${-AO.y1*AO.u}" x2="${2*AO.u}" y2="${-AO.y0*AO.u}"/>`}),
+  ()=>({top:pt(0,3,AO,'var(--oy)','(0; 3)','r')}),
+  ()=>({top:pt(1,0,AO,'var(--root)','1','l')+pt(3,0,AO,'var(--root)','3','r')}),
+  ()=>({top:pt(4,3,AO,'var(--oy)','(4; 3)','r')}),
+  ()=>({clip:curve(algFn,AO,'curve')})
+];
+let algI=0;
+function drawAlg(){let clip='',top='';for(let i=0;i<=algI;i++){const l=layers[i]();clip+=l.clip||'';top+=l.top||'';}frame($('algsvg'),AO,{clip,top});}
+const algLis=[...document.querySelectorAll('#alg li')];
+$('algNext').onclick=()=>{if(algI<algLis.length-1){algI++;algLis[algI].classList.remove('hidden');algLis[algI].classList.add('show');drawAlg();}if(algI===algLis.length-1)$('algNext').disabled=true;};
+$('algReset').onclick=()=>{algI=0;algLis.forEach((li,k)=>{li.classList.toggle('hidden',k>0);li.classList.remove('show');});$('algNext').disabled=false;drawAlg();};
+drawAlg();
+
+// ---------- signs practice ----------
+const SO={x0:-6,x1:6,y0:-6,y1:6,u:20,id:'sg'};
+let G=null, sgOk=0; const pick={};
+const rnd=arr=>arr[Math.floor(Math.random()*arr.length)];
+function newSg(){
+  let a,m,n,b,c;
+  do{a=rnd([1,-1,0.5,-0.5,2,-2]);m=rnd([-3,-2,-1,0,1,2,3]);n=rnd([-4,-3,-2,-1,1,2,3,4]);b=-2*a*m;c=a*m*m+n;}
+  while(Math.abs(c)>5.5||(m===0&&Math.random()<0.6));
+  G={a,b,c,m};
+  frame($('sgsvg'),SO,{clip:curve(P(a,b,c),SO,'curve'),top:''});
+  document.querySelectorAll('.sg button').forEach(x=>x.classList.remove('sel'));
+  for(const k in pick)delete pick[k];
+  $('sgFb').textContent='';$('sgFb').className='fb';$('sgEx').innerHTML='';
+}
+document.querySelectorAll('.sg').forEach(g=>g.querySelectorAll('button').forEach(btn=>btn.onclick=()=>{
+  g.querySelectorAll('button').forEach(x=>x.classList.remove('sel'));btn.classList.add('sel');pick[g.dataset.k]=+btn.dataset.v;}));
+$('sgCheck').onclick=()=>{
+  if(['a','b','c'].some(k=>pick[k]===undefined)){$('sgFb').textContent='Выбери знак для a, b и c.';$('sgFb').className='fb bad';return;}
+  const sg=v=>v>0?1:v<0?-1:0, t={a:sg(G.a),b:sg(G.b),c:sg(G.c)};
+  const ok=['a','b','c'].every(k=>pick[k]===t[k]);
+  const w=v=>v>0?'&gt; 0':v<0?'&lt; 0':'= 0';
+  $('sgEx').innerHTML=`<li>a ${w(t.a)}: ветви ${t.a>0?'вверх':'вниз'}.</li>
+    <li>c ${w(t.c)}: парабола пересекает Oy ${t.c>0?'выше нуля':t.c<0?'ниже нуля':'в начале координат'}.</li>
+    <li>b ${w(t.b)}: ${t.b===0?'вершина лежит на оси Oy.':`вершина ${G.m>0?'справа':'слева'} от Oy, значит у a и b ${G.m>0?'разные':'одинаковые'} знаки.`}</li>`;
+  if(ok){sgOk++;$('sgScore').textContent='Верно: '+sgOk;$('sgFb').textContent='Всё верно! Молодец 🎉';$('sgFb').className='fb good';}
+  else{$('sgFb').textContent='Есть ошибка. Прочитай объяснение ниже.';$('sgFb').className='fb bad';}
+};
+$('sgNew').onclick=newSg; newSg();
+
+// ---------- homework ----------
+const HO=id=>({x0:-5,x1:5,y0:-5,y1:5,u:14,step:1,fs:7,id});
+const HW=[
+  {tag:'базовый',cond:'Установите соответствие между графиками функций и формулами, которые их задают.',
+   g:[P(1,-4,4),P(-1,0,2),P(1,0,2)],opts:['y = x² + 2','y = −x² + 2','y = (x − 2)²','y = (x + 2)²']},
+  {tag:'базовый',cond:'Установите соответствие между графиками функций и формулами, которые их задают.',
+   g:[P(-2,0,0),P(0.5,0,0),P(-0.5,0,0)],opts:['y = 2x²','y = −2x²','y = ½x²','y = −½x²']},
+  {tag:'средний',cond:'На рисунках изображены графики функций вида y = ax² + bx + c. Установите соответствие между графиками и знаками коэффициентов a и c.',
+   g:[P(-1,2,-3),P(1,-2,-3),P(-1,-2,3)],opts:['a &gt; 0, c &gt; 0','a &lt; 0, c &gt; 0','a &gt; 0, c &lt; 0','a &lt; 0, c &lt; 0']},
+  {tag:'средний',cond:'Установите соответствие между графиками функций и формулами, которые их задают.',
+   g:[P(1,2,-2),P(-1,4,-3),P(1,-2,3)],opts:['y = (x − 1)² + 2','y = (x + 1)² − 3','y = −(x − 2)² + 1','y = (x − 1)² − 3']},
+  {tag:'повышенный',cond:'Установите соответствие между графиками функций и формулами, которые их задают.',
+   g:[P(-1,6,-8),P(-1,-6,-8),P(1,-6,8)],opts:['y = x² − 6x + 8','y = −x² + 6x − 8','y = x² + 6x + 8','y = −x² − 6x − 8']},
+  {tag:'повышенный',cond:'Установите соответствие между графиками функций и формулами, которые их задают.',
+   g:[P(1,4,3),P(-1,4,-3),P(-1,-4,-3)],opts:['y = x² − 4x + 3','y = x² + 4x + 3','y = −x² + 4x − 3','y = −x² − 4x − 3']},
+  {tag:'повышенный',cond:'Установите соответствие между графиками функций и формулами, которые их задают.',
+   g:[P(-1,-2,3),P(1,-2,-3),P(1,2,-3)],opts:['y = x² − 2x − 3','y = −x² + 2x + 3','y = x² + 2x − 3','y = −x² − 2x + 3']}
+];
+const L=['А','Б','В'];
+const list=$('hwlist');
+let num=0;
+HW.forEach((t,ti)=>{
+  num++;
+  const d=document.createElement('div');d.className='hw';
+  d.innerHTML=`<h3>Задание ${num}<span class="tag">${t.tag}</span></h3><p>${t.cond}</p>
+   <div class="graphs">${L.map((l,i)=>`<figure><figcaption>${l})</figcaption><svg id="hw${ti}${i}"></svg></figure>`).join('')}</div>
+   <div class="opts">${t.opts.map((o,i)=>`<span>${i+1}) ${o}</span>`).join('')}</div>
+   <p style="margin:0 0 4px">Ответ:</p>
+   <table class="ansgrid"><tr>${L.map(l=>`<th>${l}</th>`).join('')}</tr><tr>${L.map(()=>'<td></td>').join('')}</tr></table>`;
+  list.appendChild(d);
+  t.g.forEach((fn,i)=>{const o=HO(`h${ti}${i}`);frame($(`hw${ti}${i}`),o,{clip:curve(fn,o,'curve')});});
+});
+const BUILD=[
+  {f:'y = x² − 2x − 3',q:'отрицательны'},
+  {f:'y = −x² + 4x − 3',q:'положительны'},
+  {f:'y = x² + 4x',q:'отрицательны'}
+];
+BUILD.forEach((t,i)=>{
+  num++;
+  const d=document.createElement('div');d.className='hw';
+  d.innerHTML=`<h3>Задание ${num}<span class="tag">сложный</span></h3>
+   <p>Постройте график функции <b>${t.f}</b>. По графику найдите:</p>
+   <p>а) координаты вершины параболы;<br>б) нули функции;<br>в) при каких значениях x значения функции ${t.q}.</p>
+   <div style="max-width:340px"><div class="board"><svg id="bl${i}" role="img" aria-label="Пустая координатная плоскость"></svg></div></div>`;
+  list.appendChild(d);
+  frame($('bl'+i),{x0:-6,x1:6,y0:-6,y1:6,u:24,id:'bl'+i},{});
+});
+$('printHw').onclick=()=>{document.body.classList.add('print-hw');window.print();};
+window.addEventListener('afterprint',()=>document.body.classList.remove('print-hw'));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Основное тригонометрическое тождество</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7FAFD; --grid:#DCE7F2; --ink:#1B2430; --muted:#5A6878;
+  --cos:#2457C5; --sin:#D2353F; --one:#1E8A4C; --margin:#E58A94;
+  --card:#FFFFFF; --line:#C9D6E4; --hl:#FFF3B0;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#17222C; --grid:#223241; --ink:#E8EEF4; --muted:#9AA9B8;
+    --cos:#6E9BFF; --sin:#FF6F78; --one:#4CC384; --margin:#8A3E47;
+    --card:#1E2B37; --line:#33475A; --hl:#4A4320;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17222C; --grid:#223241; --ink:#E8EEF4; --muted:#9AA9B8;
+  --cos:#6E9BFF; --sin:#FF6F78; --one:#4CC384; --margin:#8A3E47;
+  --card:#1E2B37; --line:#33475A; --hl:#4A4320;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0; color:var(--ink); font:18px/1.6 "PT Sans",system-ui,sans-serif;
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+.page{max-width:980px;margin:0 auto;padding:24px 20px 64px 44px;position:relative}
+.page::before{content:"";position:absolute;left:24px;top:0;bottom:0;width:2px;background:var(--margin)}
+h1,h2{font-family:Caveat,"Comic Sans MS",cursive;font-weight:700;line-height:1.1;margin:0}
+h1{font-size:clamp(2.4rem,6vw,3.6rem)}
+h2{font-size:2.2rem;margin:56px 0 12px}
+p{max-width:68ch;margin:0 0 12px}
+.lead{color:var(--muted);font-size:1.1rem}
+.c{color:var(--cos);font-weight:700}.s{color:var(--sin);font-weight:700}.o{color:var(--one);font-weight:700}
+.formula{font-family:Caveat,cursive;font-size:clamp(2.6rem,8vw,4.2rem);font-weight:700;margin:12px 0 4px;white-space:nowrap}
+.formula-wrap{overflow-x:auto}
+
+/* hero lab */
+.lab{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;align-items:center;margin-top:20px}
+.board{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:12px}
+svg{display:block;width:100%;height:auto;touch-action:none}
+.readout{font-size:1.15rem}
+.readout table{border-collapse:collapse;width:100%}
+.readout td{padding:6px 4px;border-bottom:1px dashed var(--line)}
+.readout td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+.bar{display:flex;height:44px;border-radius:8px;overflow:hidden;border:2px solid var(--ink);margin:14px 0 4px}
+.bar div{display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.95rem;white-space:nowrap;overflow:hidden;transition:width .08s linear}
+.bar .bc{background:var(--cos)} .bar .bs{background:var(--sin)}
+.barlabel{display:flex;justify-content:space-between;color:var(--muted);font-size:.9rem}
+.sum{margin-top:12px;font-family:Caveat,cursive;font-size:2rem;font-weight:700}
+.sum .o{background:var(--hl);padding:0 8px;border-radius:6px}
+input[type=range]{width:100%;accent-color:var(--one);margin-top:8px}
+.hint{color:var(--muted);font-size:.95rem}
+
+/* table of values */
+.tblwrap{overflow-x:auto;max-width:100%;margin:8px 0 10px}
+table.vals{border-collapse:collapse;background:var(--card);font-size:1.1rem;min-width:640px}
+table.vals th,table.vals td{border:1.5px solid var(--line);padding:8px 10px;text-align:center;white-space:nowrap}
+table.vals th{text-align:left;font-weight:700}
+table.vals .degbtn{padding:4px 10px;border-radius:8px}
+table.vals td.on{background:var(--hl)}
+.tick{fill:var(--card);stroke:var(--ink);stroke-width:1.2;cursor:pointer}
+.tick.on{fill:var(--one);stroke:var(--one)}
+
+/* steps */
+.steps{counter-reset:st;list-style:none;padding:0;margin:0;max-width:72ch}
+.steps li{counter-increment:st;position:relative;padding:10px 0 10px 52px;border-bottom:1px dashed var(--line)}
+.steps li::before{content:counter(st);position:absolute;left:0;top:8px;width:36px;height:36px;border-radius:50%;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:Caveat,cursive;font-size:1.5rem;font-weight:700}
+.steps li.hidden{display:none}
+.steps li.show{animation:pop .35s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+
+.sticky{background:var(--hl);border-radius:4px;padding:16px 20px;max-width:640px;transform:rotate(-.6deg);box-shadow:2px 3px 0 var(--line)}
+.sticky .formula{font-size:2.2rem;margin:4px 0}
+
+button{font:inherit;font-weight:700;cursor:pointer;border-radius:10px;padding:10px 18px;border:2px solid var(--ink);background:var(--card);color:var(--ink)}
+button.primary{background:var(--one);border-color:var(--one);color:#fff}
+button:focus-visible,input:focus-visible{outline:3px solid var(--cos);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+
+/* mistakes */
+.mist{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.mist div{background:var(--card);border-left:5px solid var(--sin);padding:14px 16px;border-radius:0 10px 10px 0}
+.mist strike{color:var(--sin);text-decoration:none;font-weight:700}
+.mist strike::before{content:"✘ "}
+
+/* homework */
+.hw{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 20px;margin-bottom:16px;break-inside:avoid;max-width:760px}
+.hw h3{font-family:Caveat,cursive;font-size:1.6rem;margin:0 0 4px}
+.hw p{margin:0;font-size:1.15rem;line-height:2}
+.hw .ans{margin-top:6px;color:var(--muted);font-size:1rem}
+.tag{display:inline-block;font-family:"PT Sans",sans-serif;font-size:.85rem;font-weight:700;border:1.5px solid var(--muted);color:var(--muted);border-radius:20px;padding:0 10px;margin-left:8px;vertical-align:middle}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.85em;line-height:1.2;margin:0 2px}
+.fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 3px}
+@media print{
+  body{background:#fff;color:#000}
+  body.print-hw .page>*:not(#hwsec){display:none!important}
+  body.print-hw .page::before,body.print-hw #hwsec button{display:none!important}
+}
+.mist b.ok{color:var(--one)}
+
+/* practice */
+.task{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:18px 20px;max-width:720px}
+.task .q{font-size:1.25rem}
+.task input[type=text]{font:inherit;font-size:1.2rem;width:9em;padding:8px 10px;border:2px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.fb{min-height:1.6em;font-weight:700;margin-top:10px}
+.fb.good{color:var(--one)}.fb.bad{color:var(--sin)}
+.hints{margin:10px 0 0;padding-left:20px;color:var(--muted)}
+.score{font-family:Caveat,cursive;font-size:1.6rem;font-weight:700}
+
+/* quiz */
+.quiz{list-style:none;padding:0;margin:0;max-width:760px}
+.quiz li{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px dashed var(--line)}
+.quiz .st{font-size:1.2rem}
+.quiz button{padding:6px 14px}
+.quiz .res{width:100%;font-size:.95rem}
+.quiz li.right .res{color:var(--one)} .quiz li.wrong .res{color:var(--sin)}
+
+@media (max-width:760px){
+  .lab{grid-template-columns:1fr}
+  .page{padding-left:36px}
+  .page::before{left:18px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="page">
+  <h1>Основное тригонометрическое тождество</h1>
+  <div class="formula-wrap"><div class="formula"><span class="s">sin²α</span> + <span class="c">cos²α</span> = <span class="o">1</span></div></div>
+  <p class="lead">Двигай точку по кругу мышкой или пальцем. Углы меняются, синус и косинус меняются — а сумма их квадратов всегда равна единице.</p>
+
+  <section class="lab" aria-label="Интерактивная единичная окружность">
+    <div class="board">
+      <svg id="circle" viewBox="-135 -135 270 270" role="img" aria-label="Единичная окружность с прямоугольным треугольником">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker>
+        </defs>
+        <g stroke="var(--muted)" stroke-width="1" style="color:var(--muted)">
+          <line x1="-125" y1="0" x2="125" y2="0" marker-end="url(#arr)"/>
+          <line x1="0" y1="125" x2="0" y2="-125" marker-end="url(#arr)"/>
+        </g>
+        <text x="118" y="14" font-size="11" fill="var(--muted)">x</text>
+        <text x="-16" y="-118" font-size="11" fill="var(--muted)">y</text>
+        <circle r="100" fill="none" stroke="var(--ink)" stroke-width="1.5"/>
+        <text x="102" y="13" font-size="10" fill="var(--muted)">1</text>
+        <text x="4" y="-103" font-size="10" fill="var(--muted)">1</text>
+        <path id="arc" fill="none" stroke="var(--muted)" stroke-width="1.5"/>
+        <text id="alab" font-size="11" fill="var(--muted)">α</text>
+        <line id="cosL" stroke="var(--cos)" stroke-width="5" stroke-linecap="round"/>
+        <line id="sinL" stroke="var(--sin)" stroke-width="5" stroke-linecap="round"/>
+        <line id="hyp" stroke="var(--one)" stroke-width="3"/>
+        <path id="rightA" fill="none" stroke="var(--ink)" stroke-width="1"/>
+        <text id="cosT" font-size="11" font-weight="700" fill="var(--cos)" text-anchor="middle">cos α</text>
+        <text id="sinT" font-size="11" font-weight="700" fill="var(--sin)">sin α</text>
+        <text id="oneT" font-size="11" font-weight="700" fill="var(--one)">1</text>
+        <g id="ticks"></g>
+        <circle id="dot" r="9" fill="var(--one)" stroke="#fff" stroke-width="2" style="cursor:grab"/>
+      </svg>
+      <label class="hint" for="ang">Нажми на кружок с углом (30°, 45°, 60°…) или двигай ползунок:</label>
+      <input id="ang" type="range" min="0" max="360" value="37" step="1">
+    </div>
+
+    <div class="readout" aria-live="polite">
+      <table>
+        <tr><td>Угол α</td><td id="vA">37°</td></tr>
+        <tr><td><span class="c">cos α</span> (по оси x)</td><td id="vC" class="c"></td></tr>
+        <tr><td><span class="s">sin α</span> (по оси y)</td><td id="vS" class="s"></td></tr>
+        <tr><td><span class="c">cos²α</span></td><td id="vC2" class="c"></td></tr>
+        <tr><td><span class="s">sin²α</span></td><td id="vS2" class="s"></td></tr>
+        <tr><td>Точное значение</td><td id="vEx"></td></tr>
+      </table>
+      <div class="bar" aria-hidden="true"><div class="bs" id="bS"></div><div class="bc" id="bC"></div></div>
+      <div class="barlabel"><span>0</span><span>полоска длиной 1</span><span>1</span></div>
+      <div class="sum"><span class="s" id="sS"></span> + <span class="c" id="sC"></span> = <span class="o">1</span></div>
+    </div>
+  </section>
+
+  <h2>Табличные значения</h2>
+  <p>Эти значения нужно знать наизусть. Нажми на угол в таблице — точка на окружности перейдёт туда.</p>
+  <div class="tblwrap"><table class="vals" id="vals"></table></div>
+  <p class="hint">Секрет для синуса от 0° до 90°: √0/2, √1/2, √2/2, √3/2, √4/2 — под корнем просто 0, 1, 2, 3, 4. У косинуса те же числа, только в обратном порядке. Для 120°, 135°, 150° и других углов числа те же — меняется только знак (смотри точки на окружности).</p>
+
+  <h2>Почему так получается?</h2>
+  <p>Нажимай «Дальше» и читай по шагу. Не спеши.</p>
+  <ol class="steps" id="why">
+    <li>Окружность на рисунке — <b>единичная</b>: её радиус равен <span class="o">1</span>.</li>
+    <li class="hidden">Точка на окружности имеет координаты (<span class="c">cos α</span>; <span class="s">sin α</span>). Это и есть определение синуса и косинуса.</li>
+    <li class="hidden">Из точки опускаем перпендикуляр на ось x. Получается <b>прямоугольный треугольник</b>.</li>
+    <li class="hidden">Его катеты: <span class="c">cos α</span> и <span class="s">sin α</span>. Гипотенуза — радиус, то есть <span class="o">1</span>.</li>
+    <li class="hidden">Теорема Пифагора: катет² + катет² = гипотенуза².</li>
+    <li class="hidden">Подставляем: <span class="c">cos²α</span> + <span class="s">sin²α</span> = <span class="o">1²</span> = <span class="o">1</span>. Готово!</li>
+  </ol>
+  <div class="row"><button class="primary" id="whyNext">Дальше</button><button id="whyReset">Сначала</button></div>
+
+  <h2>Запомни три записи</h2>
+  <div class="sticky">
+    <div class="formula"><span class="s">sin²α</span> + <span class="c">cos²α</span> = 1</div>
+    <div class="formula"><span class="s">sin²α</span> = 1 − <span class="c">cos²α</span></div>
+    <div class="formula"><span class="c">cos²α</span> = 1 − <span class="s">sin²α</span></div>
+  </div>
+  <p style="margin-top:16px">Вторая и третья — это та же формула, просто одно слагаемое перенесли вправо со знаком минус.</p>
+
+  <h2>Разберём пример</h2>
+  <p class="q"><b>Задача.</b> Известно, что <span class="c">cos α = 3/5</span>, угол α в I четверти. Найди <span class="s">sin α</span>.</p>
+  <ol class="steps" id="ex">
+    <li>Пишем формулу: <span class="s">sin²α</span> = 1 − <span class="c">cos²α</span>.</li>
+    <li class="hidden">Возводим косинус в квадрат: (3/5)² = 9/25.</li>
+    <li class="hidden">Вычитаем: 1 − 9/25 = 25/25 − 9/25 = <b>16/25</b>. Значит, <span class="s">sin²α</span> = 16/25.</li>
+    <li class="hidden">Извлекаем корень: √(16/25) = <b>4/5</b>.</li>
+    <li class="hidden">Выбираем знак. В I четверти синус положительный, поэтому <span class="s">sin α = 4/5</span>.</li>
+  </ol>
+  <div class="row"><button class="primary" id="exNext">Следующий шаг</button><button id="exReset">Сначала</button></div>
+
+  <h2>Знак зависит от четверти</h2>
+  <p>Корень даёт два ответа: «плюс» и «минус». Какой выбрать — смотрим, в какой четверти угол.</p>
+  <div class="board" style="max-width:360px">
+    <svg viewBox="-120 -120 240 240" role="img" aria-label="Знаки синуса и косинуса по четвертям">
+      <line x1="-115" y1="0" x2="115" y2="0" stroke="var(--muted)"/><line x1="0" y1="-115" x2="0" y2="115" stroke="var(--muted)"/>
+      <circle r="95" fill="none" stroke="var(--ink)" stroke-width="1.2"/>
+      <g font-size="13" font-weight="700" text-anchor="middle">
+        <text x="50" y="-62" fill="var(--ink)">I</text><text x="50" y="-42" fill="var(--sin)">sin +</text><text x="50" y="-24" fill="var(--cos)">cos +</text>
+        <text x="-50" y="-62" fill="var(--ink)">II</text><text x="-50" y="-42" fill="var(--sin)">sin +</text><text x="-50" y="-24" fill="var(--cos)">cos −</text>
+        <text x="-50" y="30" fill="var(--ink)">III</text><text x="-50" y="50" fill="var(--sin)">sin −</text><text x="-50" y="68" fill="var(--cos)">cos −</text>
+        <text x="50" y="30" fill="var(--ink)">IV</text><text x="50" y="50" fill="var(--sin)">sin −</text><text x="50" y="68" fill="var(--cos)">cos +</text>
+      </g>
+    </svg>
+  </div>
+  <p class="hint" style="margin-top:8px">Подсказка: синус — это высота (вверх «+», вниз «−»), косинус — сдвиг вправо «+» или влево «−».</p>
+
+  <h2>Частые ошибки</h2>
+  <div class="mist">
+    <div><strike>sin α + cos α = 1</strike><br>Нет! Складываем <b class="ok">квадраты</b>: sin²α + cos²α = 1.</div>
+    <div><strike>sin²α = sin(α²)</strike><br>Запись sin²α значит <b class="ok">(sin α)²</b> — сначала синус, потом в квадрат.</div>
+    <div><strike>sin α = 1 − cos α</strike><br>Сначала находим <b class="ok">sin²α</b>, потом извлекаем корень.</div>
+    <div><strike>Знак всегда «+»</strike><br>Знак выбираем <b class="ok">по четверти</b> угла.</div>
+  </div>
+
+  <h2>Потренируйся</h2>
+  <div class="task" id="task">
+    <p class="q" id="tq"></p>
+    <div class="row">
+      <label for="tans"><span id="tlbl"></span> =</label>
+      <input type="text" id="tans" inputmode="text" placeholder="например, 4/5" autocomplete="off">
+      <button class="primary" id="tcheck">Проверить</button>
+      <button id="thint">Подсказка</button>
+      <button id="tnew">Новая задача</button>
+    </div>
+    <ul class="hints" id="th"></ul>
+    <div class="fb" id="tfb" aria-live="polite"></div>
+    <div class="score" id="tscore">Решено: 0</div>
+  </div>
+
+  <h2>Проверь себя: верно или нет?</h2>
+  <ul class="quiz" id="quiz"></ul>
+  <p class="score" id="qscore" style="margin-top:12px"></p>
+
+  <section id="hwsec">
+    <h2>Домашнее задание</h2>
+    <p>10 задач от простых к сложным. Задачи 6–10 — уровень ЕГЭ (профиль, задание 7). Ответ — целое число или десятичная дробь.</p>
+    <div class="row" style="margin-bottom:18px"><button id="printHw">Распечатать задание</button></div>
+
+    <div class="hw"><h3>Задача 1<span class="tag">базовый</span></h3>
+      <p>Найдите sin²α, если cos²α = 0,36.</p><p class="ans">Ответ: ____________</p></div>
+
+    <div class="hw"><h3>Задача 2<span class="tag">базовый</span></h3>
+      <p>Найдите значение выражения 5sin²α + 5cos²α − 3.</p><p class="ans">Ответ: ____________</p></div>
+
+    <div class="hw"><h3>Задача 3<span class="tag">базовый</span></h3>
+      <p>Найдите cos²α, если sin α = 0,6.</p><p class="ans">Ответ: ____________</p></div>
+
+    <div class="hw"><h3>Задача 4<span class="tag">средний</span></h3>
+      <p>Найдите sin α, если cos α = 0,8 и α ∈ (0; <span class="fr"><span>π</span><span>2</span></span>).</p><p class="ans">Ответ: ____________</p></div>
+
+    <div class="hw"><h3>Задача 5<span class="tag">средний</span></h3>
+      <p>Найдите cos α, если sin α = −0,6 и α ∈ (π; <span class="fr"><span>3π</span><span>2</span></span>).</p><p class="ans">Ответ: ____________</p></div>
+
+    <div class="hw"><h3>Задача 6<span class="tag">ЕГЭ</span></h3>
+      <p>Найдите 3cos α, если sin α = <span class="fr"><span>2√2</span><span>3</span></span> и α ∈ (<span class="fr"><span>π</span><span>2</span></span>; π).</p><p class="ans">Ответ: ____________</p></div>
+
+    <div class="hw"><h3>Задача 7<span class="tag">ЕГЭ</span></h3>
+      <p>Найдите 5sin α, если cos α = <span class="fr"><span>2√6</span><span>5</span></span> и α ∈ (<span class="fr"><span>3π</span><span>2</span></span>; 2π).</p><p class="ans">Ответ: ____________</p></div>
+
+    <div class="hw"><h3>Задача 8<span class="tag">ЕГЭ</span></h3>
+      <p>Найдите √26·cos α, если sin α = <span class="fr"><span>5</span><span>√26</span></span> и α ∈ (<span class="fr"><span>π</span><span>2</span></span>; π).</p><p class="ans">Ответ: ____________</p></div>
+
+    <div class="hw"><h3>Задача 9<span class="tag">повышенный</span></h3>
+      <p>Найдите tg α, если cos α = −<span class="fr"><span>√10</span><span>10</span></span> и α ∈ (π; <span class="fr"><span>3π</span><span>2</span></span>).</p>
+      <p class="ans">Напоминание: tg α = <span class="fr"><span>sin α</span><span>cos α</span></span>. Ответ: ____________</p></div>
+
+    <div class="hw"><h3>Задача 10<span class="tag">повышенный</span></h3>
+      <p>Известно, что sin α + cos α = 1,2. Найдите sin α · cos α.</p><p class="ans">Ответ: ____________</p></div>
+  </section>
+</main>
+
+<script>
+(function(){
+  // ---------- unit circle ----------
+  const R=100, $=id=>document.getElementById(id);
+  const svg=$('circle'), slider=$('ang');
+  const f=v=>(Math.abs(v)<0.0005?0:v).toFixed(2).replace('.',',').replace('-','−');
+  const r3='√3/2', r2='√2/2';
+  const EX={0:['0','1','0'],30:['1/2',r3,'π/6'],45:[r2,r2,'π/4'],60:[r3,'1/2','π/3'],90:['1','0','π/2'],
+    120:[r3,'−1/2','2π/3'],135:[r2,'−'+r2,'3π/4'],150:['1/2','−'+r3,'5π/6'],180:['0','−1','π'],
+    210:['−1/2','−'+r3,'7π/6'],225:['−'+r2,'−'+r2,'5π/4'],240:['−'+r3,'−1/2','4π/3'],270:['−1','0','3π/2'],
+    300:['−'+r3,'1/2','5π/3'],315:['−'+r2,r2,'7π/4'],330:['−1/2',r3,'11π/6'],360:['0','1','2π']};
+  const STD=Object.keys(EX).map(Number);
+  const tg=$('ticks'), NS='http://www.w3.org/2000/svg';
+  STD.filter(d=>d<360).forEach(d=>{
+    const a=d*Math.PI/180;
+    const c=document.createElementNS(NS,'circle');
+    c.setAttribute('cx',R*Math.cos(a));c.setAttribute('cy',-R*Math.sin(a));c.setAttribute('r',4);
+    c.setAttribute('class','tick');c.dataset.deg=d;tg.appendChild(c);
+    const t=document.createElementNS(NS,'text');
+    t.setAttribute('x',117*Math.cos(a));t.setAttribute('y',-117*Math.sin(a)+2.5);
+    t.setAttribute('font-size','7.5');t.setAttribute('text-anchor','middle');t.setAttribute('fill','var(--muted)');
+    t.style.cursor='pointer';t.textContent=d+'°';tg.appendChild(t);
+  });
+  function draw(deg){
+    const a=deg*Math.PI/180, c=Math.cos(a), s=Math.sin(a);
+    const x=R*c, y=-R*s;
+    $('dot').setAttribute('cx',x);$('dot').setAttribute('cy',y);
+    const set=(el,o)=>{for(const k in o)$(el).setAttribute(k,o[k])};
+    set('cosL',{x1:0,y1:0,x2:x,y2:0});
+    set('sinL',{x1:x,y1:0,x2:x,y2:y});
+    set('hyp',{x1:0,y1:0,x2:x,y2:y});
+    const sx=c>=0?-8:8, sy=s>=0?-8:8;
+    $('rightA').setAttribute('d',(Math.abs(c)>0.12&&Math.abs(s)>0.12)?`M${x+sx} 0 L${x+sx} ${sy} L${x} ${sy}`:'');
+    set('cosT',{x:x/2,y:s>=0?16:-8});
+    set('sinT',{x:x+(c>=0?6:-34),y:y/2+4});
+    set('oneT',{x:x/2+(s>=0?-10:6)*(c>=0?1:-1),y:y/2-6});
+    const r=22, large=deg>180?1:0, ex=r*c, ey=-r*s;
+    $('arc').setAttribute('d',deg<1?'':deg>359?`M${r} 0 A${r} ${r} 0 1 0 ${-r} 0 A${r} ${r} 0 1 0 ${r} 0`:`M${r} 0 A${r} ${r} 0 ${large} 0 ${ex} ${ey}`);
+    const ha=a/2; set('alab',{x:34*Math.cos(ha)-3,y:-34*Math.sin(ha)+4});
+    $('vA').textContent=Math.round(deg)+'°';
+    $('vC').textContent=f(c);$('vS').textContent=f(s);
+    $('vC2').textContent=f(c*c);$('vS2').textContent=f(s*s);
+    $('sS').textContent=f(s*s);$('sC').textContent=f(c*c);
+    $('bS').style.width=(s*s*100)+'%';$('bC').style.width=(c*c*100)+'%';
+    $('bS').textContent=s*s>0.15?'sin²α':'';$('bC').textContent=c*c>0.15?'cos²α':'';
+    const e=EX[deg];
+    $('vEx').innerHTML=e?`<span class="s">sin = ${e[0]}</span><br><span class="c">cos = ${e[1]}</span>`:'<span style="font-weight:400;color:var(--muted)">угол не табличный</span>';
+    tg.querySelectorAll('.tick').forEach(t=>t.classList.toggle('on',+t.dataset.deg===deg%360));
+    document.querySelectorAll('#vals td[data-deg]').forEach(el=>el.classList.toggle('on',+el.dataset.deg===deg));
+  }
+  slider.addEventListener('input',()=>draw(+slider.value));
+  let drag=false;
+  function fromEvent(e){
+    const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;
+    const p=pt.matrixTransform(svg.getScreenCTM().inverse());
+    let d=Math.atan2(-p.y,p.x)*180/Math.PI; if(d<0)d+=360;
+    const sn=STD.find(k=>Math.abs(k-d)<=4); if(sn!==undefined)d=sn;
+    slider.value=Math.round(d); draw(Math.round(d));
+  }
+  svg.addEventListener('pointerdown',e=>{drag=true;svg.setPointerCapture(e.pointerId);fromEvent(e)});
+  svg.addEventListener('pointermove',e=>{if(drag)fromEvent(e)});
+  svg.addEventListener('pointerup',()=>drag=false);
+  svg.addEventListener('pointercancel',()=>drag=false);
+  draw(37);
+
+  // ---------- table of values ----------
+  const TA=[0,30,45,60,90,180,270,360], vt=$('vals');
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const row=(h,fn)=>`<tr><th scope="row">${h}</th>${TA.map(fn).join('')}</tr>`;
+  vt.innerHTML=
+    row('α (градусы)',d=>`<td data-deg="${d}"><button class="degbtn" data-go="${d}">${d}°</button></td>`)+
+    row('α (радианы)',d=>`<td data-deg="${d}">${EX[d][2]}</td>`)+
+    row('<span class="s">sin α</span>',d=>`<td data-deg="${d}" class="s">${EX[d][0]}</td>`)+
+    row('<span class="c">cos α</span>',d=>`<td data-deg="${d}" class="c">${EX[d][1]}</td>`)+
+    row('<span class="s">sin²α</span> + <span class="c">cos²α</span>',d=>`<td data-deg="${d}" class="o">1</td>`);
+  vt.addEventListener('click',e=>{
+    const b=e.target.closest('[data-go]'); if(!b)return;
+    slider.value=b.dataset.go; draw(+b.dataset.go);
+    svg.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'});
+  });
+
+  // ---------- step reveals ----------
+  function stepper(listId,nextId,resetId){
+    const items=[...document.querySelectorAll('#'+listId+' li')], next=$(nextId);
+    let i=0;
+    next.onclick=()=>{ if(i<items.length-1){i++;items[i].classList.remove('hidden');items[i].classList.add('show');}
+      if(i===items.length-1)next.disabled=true; };
+    $(resetId).onclick=()=>{i=0;items.forEach((li,k)=>{li.classList.toggle('hidden',k>0);li.classList.remove('show')});next.disabled=false;};
+  }
+  stepper('why','whyNext','whyReset'); stepper('ex','exNext','exReset');
+
+  // ---------- practice ----------
+  const triples=[[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29],[9,40,41]];
+  const Q=['I','II','III','IV'], sgnSin=[1,1,-1,-1], sgnCos=[1,-1,-1,1];
+  let T=null, solved=0, hintN=0;
+  const frac=(n,d)=>(n<0?'−':'')+Math.abs(n)+'/'+d;
+  function newTask(){
+    const [a,b,c]=triples[Math.floor(Math.random()*triples.length)];
+    const q=Math.floor(Math.random()*4), giveCos=Math.random()<.5;
+    const swap=Math.random()<.5, g=swap?b:a, other=swap?a:b;
+    const gs=giveCos?sgnCos[q]:sgnSin[q], os=giveCos?sgnSin[q]:sgnCos[q];
+    T={c,g:gs*g,ans:os*other,giveCos,q};
+    const gn=giveCos?'cos α':'sin α', fn=giveCos?'sin α':'cos α';
+    $('tq').innerHTML=`Дано: <span class="${giveCos?'c':'s'}">${gn} = ${frac(T.g,c)}</span>, угол α в <b>${Q[q]}</b> четверти. Найди <span class="${giveCos?'s':'c'}">${fn}</span>.`;
+    $('tlbl').innerHTML=`<span class="${giveCos?'s':'c'}">${fn}</span>`;
+    $('tans').value='';$('tfb').textContent='';$('tfb').className='fb';$('th').innerHTML='';hintN=0;
+  }
+  function hints(){
+    const {c,g,ans,giveCos,q}=T, fn=giveCos?'sin':'cos', gn=giveCos?'cos':'sin';
+    return [
+      `Формула: ${fn}²α = 1 − ${gn}²α.`,
+      `${gn}²α = (${frac(Math.abs(g),c)})² = ${g*g}/${c*c}.`,
+      `${fn}²α = ${c*c}/${c*c} − ${g*g}/${c*c} = ${ans*ans}/${c*c}. Корень: ${Math.abs(ans)}/${c}.`,
+      `В ${Q[q]} четверти ${fn} ${ans>0?'положительный «+»':'отрицательный «−»'}.`
+    ];
+  }
+  function parse(s){
+    s=s.trim().replace(/−|–/g,'-').replace(',','.').replace(/\s/g,'');
+    if(!s)return NaN;
+    if(s.includes('/')){const [n,d]=s.split('/');return parseFloat(n)/parseFloat(d);}
+    return parseFloat(s);
+  }
+  $('tcheck').onclick=()=>{
+    const v=parse($('tans').value), fb=$('tfb'), right=T.ans/T.c;
+    if(isNaN(v)){fb.textContent='Впиши ответ дробью, например 4/5 или −12/13.';fb.className='fb bad';return;}
+    if(Math.abs(v-right)<0.005){solved++;$('tscore').textContent='Решено: '+solved;fb.textContent='Верно! Молодец 🎉';fb.className='fb good';}
+    else if(Math.abs(v+right)<0.005){fb.textContent='Число верное, а знак — нет. Посмотри, в какой четверти угол.';fb.className='fb bad';}
+    else{fb.textContent='Пока не так. Нажми «Подсказка».';fb.className='fb bad';}
+  };
+  $('tans').addEventListener('keydown',e=>{if(e.key==='Enter')$('tcheck').click()});
+  $('thint').onclick=()=>{const h=hints();if(hintN<h.length){const li=document.createElement('li');li.textContent=h[hintN++];$('th').appendChild(li);}};
+  $('tnew').onclick=newTask;
+  newTask();
+
+  // ---------- quiz ----------
+  const items=[
+    ['sin²30° + cos²30° = 1',true,'Верно — тождество работает для любого угла.'],
+    ['sin α + cos α = 1',false,'Неверно: складываются квадраты, а не сами синус и косинус.'],
+    ['Если sin²α = 0,36, то cos²α = 0,64',true,'Верно: 1 − 0,36 = 0,64.'],
+    ['Если cos α = 0,6, то sin²α = 0,4',false,'Неверно: сначала в квадрат: 0,6² = 0,36, тогда sin²α = 0,64.'],
+    ['sin²α может быть больше 1',false,'Неверно: sin²α + cos²α = 1, а cos²α не меньше 0.'],
+    ['Во II четверти косинус отрицательный',true,'Верно: точка находится слева от оси y.']
+  ];
+  let qs=0, qa=0; const ql=$('quiz');
+  items.forEach(([t,ok,ex])=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<span class="st">${t}</span><span class="row" style="margin:0"><button>Верно</button><button>Неверно</button></span><span class="res"></span>`;
+    const [by,bn]=li.querySelectorAll('button');
+    const ans=v=>{by.disabled=bn.disabled=true;qa++;const good=v===ok;if(good)qs++;
+      li.classList.add(good?'right':'wrong');li.querySelector('.res').textContent=(good?'✔ ':'✘ ')+ex;
+      $('qscore').textContent=`Правильных ответов: ${qs} из ${qa}`+(qa===items.length?(qs===items.length?' — отлично!':' — попробуй ещё раз позже.'):'');};
+    by.onclick=()=>ans(true);bn.onclick=()=>ans(false);
+    ql.appendChild(li);
+  });
+  document.getElementById('printHw').onclick=()=>{document.body.classList.add('print-hw');window.print();};
+  window.addEventListener('afterprint',()=>document.body.classList.remove('print-hw'));
+})();
+</script>
+</body>
+</html>

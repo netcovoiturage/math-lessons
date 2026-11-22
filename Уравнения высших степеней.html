@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Уравнения высших степеней</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7FAFD; --grid:#DCE7F2; --ink:#1B2430; --muted:#5A6878;
+  --curve:#2457C5; --red:#D2353F; --root:#1E8A4C; --acc:#8A3FC2; --margin:#E58A94;
+  --card:#FFFFFF; --line:#C9D6E4; --hl:#FFF3B0; --ghost:#9DB0C4;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#17222C; --grid:#223241; --ink:#E8EEF4; --muted:#9AA9B8;
+    --curve:#6E9BFF; --red:#FF6F78; --root:#4CC384; --acc:#C08BFF; --margin:#8A3E47;
+    --card:#1E2B37; --line:#33475A; --hl:#4A4320; --ghost:#4F6578;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17222C; --grid:#223241; --ink:#E8EEF4; --muted:#9AA9B8;
+  --curve:#6E9BFF; --red:#FF6F78; --root:#4CC384; --acc:#C08BFF; --margin:#8A3E47;
+  --card:#1E2B37; --line:#33475A; --hl:#4A4320; --ghost:#4F6578;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0; color:var(--ink); font:18px/1.6 "PT Sans",system-ui,sans-serif;
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+.page{max-width:1020px;margin:0 auto;padding:24px 20px 64px 44px;position:relative}
+.page::before{content:"";position:absolute;left:24px;top:0;bottom:0;width:2px;background:var(--margin)}
+h1,h2,h3{font-family:Caveat,"Comic Sans MS",cursive;font-weight:700;line-height:1.1;margin:0}
+h1{font-size:clamp(2.4rem,6vw,3.6rem)}
+h2{font-size:2.2rem;margin:56px 0 12px}
+h3{font-size:1.6rem;margin:0 0 4px}
+p{max-width:68ch;margin:0 0 12px}
+.lead{color:var(--muted);font-size:1.1rem}
+.hint{color:var(--muted);font-size:.95rem}
+.rt{color:var(--root);font-weight:700}.rd{color:var(--red);font-weight:700}.cv{color:var(--curve);font-weight:700}
+.big{font-family:Caveat,cursive;font-size:clamp(2.1rem,6vw,3rem);font-weight:700;line-height:1.1;margin:6px 0 10px}
+
+.board{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px}
+svg{display:block;width:100%;height:auto}
+.gl{stroke:var(--grid);stroke-width:1}
+.ax{stroke:var(--ink);stroke-width:1.3}
+.tl{fill:var(--muted)}
+.curve{fill:none;stroke:var(--curve);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.hline{stroke:var(--red);stroke-width:2;stroke-dasharray:6 4}
+
+button{font:inherit;font-weight:700;cursor:pointer;border-radius:10px;padding:9px 16px;border:2px solid var(--ink);background:var(--card);color:var(--ink)}
+button.primary{background:var(--root);border-color:var(--root);color:#fff}
+button:disabled{opacity:.45;cursor:default}
+button:focus-visible,input:focus-visible{outline:3px solid var(--curve);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+
+.med{display:flex;gap:16px;align-items:flex-start;background:var(--card);border:2px dashed var(--acc);border-radius:14px;padding:14px 18px;max-width:760px;margin-top:18px}
+.med .ic{font-size:2rem;line-height:1}
+.med h3{color:var(--acc)}
+.med p{margin:4px 0}
+
+.levels{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 14px}
+.levels button{padding:6px 12px;font-size:1rem}
+.levels button[aria-pressed="true"]{background:var(--ink);color:var(--card)}
+.lab{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:24px;align-items:start}
+.sl{display:grid;grid-template-columns:2.2em 1fr 2.6em;gap:10px;align-items:center;margin:6px 0}
+.sl b{font-size:1.2rem}
+.sl output{text-align:right;font-weight:700}
+input[type=range]{width:100%;accent-color:var(--curve)}
+.rule{border-collapse:collapse;width:100%;margin-top:10px;background:var(--card)}
+.rule td{border:1.5px solid var(--line);padding:6px 10px}
+.rule tr.on td{background:var(--hl)}
+.res{font-size:1.25rem;font-weight:700;margin-top:10px}
+
+.steps{counter-reset:st;list-style:none;padding:0;margin:0}
+.steps li{counter-increment:st;position:relative;padding:8px 0 8px 48px;border-bottom:1px dashed var(--line)}
+.steps li::before{content:counter(st);position:absolute;left:0;top:6px;width:34px;height:34px;border-radius:50%;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:Caveat,cursive;font-size:1.4rem;font-weight:700}
+.steps li.hidden{display:none}
+.steps li.show{animation:pop .35s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+.horner{border-collapse:collapse;margin:8px 0 2px;background:var(--card)}
+.horner td{border:1.5px solid var(--line);padding:3px 10px;text-align:center;min-width:2.4em}
+.horner tr:first-child td{color:var(--muted)}
+.horner td.z{background:var(--hl);font-weight:700}
+
+.sticky{background:var(--hl);border-radius:4px;padding:14px 20px;transform:rotate(-.5deg);box-shadow:2px 3px 0 var(--line);max-width:720px}
+.sticky ol{margin:6px 0 0;padding-left:22px}
+.sticky li{margin:4px 0}
+
+.chk{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:16px 20px;max-width:780px}
+.chk .eq{font-size:1.3rem;font-weight:700}
+.divs{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.divs button{padding:5px 12px;min-width:3.2em}
+.divs button.yes{background:var(--root);border-color:var(--root);color:#fff}
+.divs button.no{border-color:var(--red);color:var(--red)}
+.log{list-style:none;padding:0;margin:8px 0 0;font-variant-numeric:tabular-nums}
+.log li{padding:4px 0;border-bottom:1px dashed var(--line)}
+.wrapx{overflow-x:auto}
+
+.mist{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.mist div{background:var(--card);border-left:5px solid var(--red);padding:14px 16px;border-radius:0 10px 10px 0}
+.mist .bad{color:var(--red);font-weight:700}
+.mist .bad::before{content:"✘ "}
+.mist b{color:var(--root)}
+
+.hw{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 20px;margin-bottom:16px;break-inside:avoid;max-width:760px}
+.hw p{margin:0;font-size:1.15rem;line-height:1.9}
+.hw .ans{margin-top:6px;color:var(--muted);font-size:1rem}
+.tag{display:inline-block;font-family:"PT Sans",sans-serif;font-size:.85rem;font-weight:700;border:1.5px solid var(--muted);color:var(--muted);border-radius:20px;padding:0 10px;margin-left:8px;vertical-align:middle}
+
+@media (max-width:760px){
+  .lab{grid-template-columns:1fr}
+  .page{padding-left:36px}.page::before{left:18px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{
+  body{background:#fff;color:#000}
+  body.print-hw .page>*:not(#hwsec){display:none!important}
+  body.print-hw .page::before,body.print-hw #hwsec button{display:none!important}
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <h1>Уравнения высших степеней</h1>
+  <p class="lead">Уравнения, где x стоит в степени 3, 4 и выше. Пять способов решения — от самого простого к самому сложному. Выбирай способ, нажимай «Следующий шаг» и смотри на график: корни — это точки, где график пересекает ось Ox.</p>
+
+  <div class="sticky" style="margin-top:14px">
+    <b>Главная мысль:</b> уравнение степени n имеет <b>не больше n корней</b>. Уравнение третьей степени — не больше трёх корней, четвёртой — не больше четырёх.
+  </div>
+
+  <div class="levels" id="levels" role="group" aria-label="Способ решения"></div>
+
+  <section class="lab">
+    <div class="board"><svg id="gsvg" role="img" aria-label="График многочлена"></svg>
+      <p class="hint" style="margin:6px 4px 0" id="ghint"></p></div>
+    <div>
+      <div class="big" id="eq"></div>
+      <div id="body"></div>
+    </div>
+  </section>
+
+  <div class="med">
+    <div class="ic" aria-hidden="true">🩺</div>
+    <div>
+      <h3>Где это пригодится врачу</h3>
+      <p>Многие клетки (например, лимфоциты) по форме близки к шару. Объём шара V = <sup>4</sup>⁄<sub>3</sub>·πr³.</p>
+      <p>Пусть объём клетки V = 36π мкм³. Найдём радиус: <sup>4</sup>⁄<sub>3</sub>·πr³ = 36π → r³ = 27 → <span class="rt">r = 3 мкм</span>.</p>
+      <p class="hint">Это уравнение третьей степени вида xⁿ = a — самый первый способ.</p>
+    </div>
+  </div>
+
+  <h2>Тренажёр: подбери корень</h2>
+  <p>Целый корень надо искать среди делителей свободного члена (числа без x). Нажимай на делители — увидишь подстановку. Если получилось 0, это корень.</p>
+  <div class="chk">
+    <div class="row" style="margin-top:0" id="presets" role="group" aria-label="Выбор уравнения"></div>
+    <p class="eq" id="ceq" style="margin:12px 0 0"></p>
+    <p class="hint" id="cdiv"></p>
+    <div class="divs" id="divs"></div>
+    <div class="wrapx"><ul class="log" id="log" aria-live="polite"></ul></div>
+  </div>
+
+  <h2>Какой способ выбрать?</h2>
+  <div class="sticky">
+    <ol>
+      <li>Вид <b>xⁿ = a</b> → извлекаем корень (следим за чётностью n).</li>
+      <li>Нет числа без x → <b>выносим x за скобку</b>.</li>
+      <li>Четыре слагаемых → пробуем <b>группировку</b>.</li>
+      <li>Только x⁴, x² и число → <b>замена t = x²</b>.</li>
+      <li>Ничего не подходит → <b>подбираем корень</b> среди делителей свободного члена и делим.</li>
+    </ol>
+  </div>
+
+  <h2>Частые ошибки</h2>
+  <div class="mist">
+    <div><span class="bad">Делим обе части x³ = 4x на x</span><br>Так теряется корень x = 0. Нужно <b>перенести всё влево и вынести x</b>.</div>
+    <div><span class="bad">x⁴ = 16, значит x = 2</span><br>Степень чётная, корней два: <b>x = 2 и x = −2</b>.</div>
+    <div><span class="bad">x³ = −8 не имеет корней</span><br>Степень нечётная, корень есть: <b>x = −2</b>, ведь (−2)³ = −8.</div>
+    <div><span class="bad">t = x² = −1, значит x = ±1</span><br>x² не бывает отрицательным. Такое t <b>отбрасываем</b>.</div>
+  </div>
+
+  <section id="hwsec">
+    <h2>Домашнее задание</h2>
+    <p>10 заданий в формате ЕГЭ базового уровня, от простых к сложным. Ответ — целое число.</p>
+    <div class="row" style="margin-bottom:18px"><button id="printHw">Распечатать задание</button></div>
+    <div id="hwlist"></div>
+  </section>
+</main>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const mn=v=>String(v).replace('-','−');
+const fmt=v=>{const r=Math.round(v*100)/100;return mn(Object.is(r,-0)?0:r).replace('.',',');};
+
+// ---------- graph ----------
+function frame(svg,o,clip,top){
+  const {x0,x1,y0,y1,ux,uy,id}=o, sx=o.sx||1, sy=o.sy||1, fs=10;
+  let s=`<defs><marker id="ar-${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--ink)"/></marker>
+  <clipPath id="cl-${id}"><rect x="${x0*ux}" y="${-y1*uy}" width="${(x1-x0)*ux}" height="${(y1-y0)*uy}"/></clipPath></defs>`;
+  for(let i=Math.ceil(x0);i<=x1;i++) s+=`<line class="gl" x1="${i*ux}" y1="${-y1*uy}" x2="${i*ux}" y2="${-y0*uy}"/>`;
+  for(let j=Math.ceil(y0);j<=y1;j+=1) if(j%sy===0) s+=`<line class="gl" x1="${x0*ux}" y1="${-j*uy}" x2="${x1*ux}" y2="${-j*uy}"/>`;
+  s+=`<line class="ax" x1="${x0*ux}" y1="0" x2="${x1*ux+16}" y2="0" marker-end="url(#ar-${id})"/>`;
+  s+=`<line class="ax" x1="0" y1="${-y0*uy}" x2="0" y2="${-y1*uy-16}" marker-end="url(#ar-${id})"/>`;
+  for(let i=Math.ceil(x0);i<=x1;i++) if(i&&i%sx===0) s+=`<text class="tl" font-size="${fs}" x="${i*ux}" y="${fs+3}" text-anchor="middle">${mn(i)}</text>`;
+  for(let j=Math.ceil(y0);j<=y1;j++) if(j&&j%sy===0) s+=`<text class="tl" font-size="${fs}" x="-4" y="${-j*uy+fs/3}" text-anchor="end">${mn(j)}</text>`;
+  s+=`<text class="tl" font-size="${fs}" x="-4" y="${fs+2}" text-anchor="end">0</text>`;
+  s+=`<text class="tl" font-size="11" font-style="italic" x="${x1*ux+16}" y="-6" text-anchor="end">x</text>`;
+  s+=`<text class="tl" font-size="11" font-style="italic" x="6" y="${-y1*uy-8}">y</text>`;
+  s+=`<g clip-path="url(#cl-${id})">${clip}</g>${top}`;
+  svg.setAttribute('viewBox',`${x0*ux-26} ${-y1*uy-24} ${(x1-x0)*ux+50} ${(y1-y0)*uy+44}`);
+  svg.innerHTML=s;
+}
+function curve(fn,o){let d='',pen=false;
+  for(let x=o.x0;x<=o.x1+1e-9;x+=0.01){const y=fn(x);if(y<o.y0-5||y>o.y1+5){pen=false;continue;}
+    d+=(pen?'L':'M')+(x*o.ux).toFixed(1)+' '+(-y*o.uy).toFixed(1);pen=true;}
+  return `<path class="curve" d="${d}"/>`;}
+function pt(x,o,label){
+  return `<circle cx="${x*o.ux}" cy="0" r="6" fill="var(--root)" stroke="var(--card)" stroke-width="2"/>`+
+    (label?`<text x="${x*o.ux}" y="-10" font-size="12" font-weight="700" fill="var(--root)" text-anchor="middle" paint-order="stroke" stroke="var(--card)" stroke-width="3">${label}</text>`:'');}
+const poly=c=>x=>c.reduce((s,k)=>s*x+k,0);
+
+// ---------- levels ----------
+const LV=[
+  {name:'xⁿ = a'},
+  {name:'Вынесение x',eq:'x³ − 9x = 0',c:[1,0,-9,0],roots:[-3,0,3],o:{x0:-4,x1:4,y0:-12,y1:12,ux:34,uy:11,sy:2},
+   steps:['Выносим общий множитель x за скобку: <b>x(x² − 9) = 0</b>.',
+     'Произведение равно нулю, когда <b>хотя бы один множитель</b> равен нулю.',
+     'x = 0 &nbsp;или&nbsp; x² − 9 = 0.',
+     'x² = 9 → x = 3 или x = −3.',
+     'Ответ: <span class="rt">−3; 0; 3</span>. Три корня — как и степень уравнения.']},
+  {name:'Группировка',eq:'x³ + 2x² − x − 2 = 0',c:[1,2,-1,-2],roots:[-2,-1,1],o:{x0:-4,x1:3,y0:-8,y1:10,ux:38,uy:14,sy:2},
+   steps:['Объединяем слагаемые в пары: <b>(x³ + 2x²) − (x + 2) = 0</b>.',
+     'Из первой скобки выносим x²: <b>x²(x + 2) − 1·(x + 2) = 0</b>.',
+     'Скобка (x + 2) общая — выносим её: <b>(x + 2)(x² − 1) = 0</b>.',
+     'x + 2 = 0 → x = −2; &nbsp; x² − 1 = 0 → x = ±1.',
+     'Ответ: <span class="rt">−2; −1; 1</span>.']},
+  {name:'Замена t = x²',eq:'x⁴ − 5x² + 4 = 0',c:[1,0,-5,0,4],roots:[-2,-1,1,2],o:{x0:-3,x1:3,y0:-4,y1:8,ux:44,uy:20},
+   steps:['Это <b>биквадратное</b> уравнение: x⁴ = (x²)². Делаем замену <b>t = x²</b>, причём t ≥ 0.',
+     'Получаем квадратное уравнение: <b>t² − 5t + 4 = 0</b>.',
+     'По теореме Виета: t = 1 или t = 4. Оба ≥ 0 — подходят.',
+     'Возвращаемся к x: x² = 1 → x = ±1; &nbsp; x² = 4 → x = ±2.',
+     'Ответ: <span class="rt">−2; −1; 1; 2</span>. Четыре корня — степень 4.']},
+  {name:'Подбор корня',eq:'x³ − 6x² + 11x − 6 = 0',c:[1,-6,11,-6],roots:[1,2,3],o:{x0:-1,x1:5,y0:-7,y1:7,ux:48,uy:20},
+   steps:['Целый корень ищем среди <b>делителей свободного члена</b> −6: ±1, ±2, ±3, ±6.',
+     'Пробуем x = 1: 1 − 6 + 11 − 6 = 0 ✔. Значит, <b>x = 1 — корень</b>.',
+     'Делим многочлен на (x − 1) по схеме Горнера:<div class="wrapx"><table class="horner"><tr><td></td><td>1</td><td>−6</td><td>11</td><td>−6</td></tr><tr><td>1</td><td>1</td><td>−5</td><td>6</td><td class="z">0</td></tr></table></div>Получаем: <b>(x − 1)(x² − 5x + 6) = 0</b>.',
+     'Решаем x² − 5x + 6 = 0: x = 2, x = 3.',
+     'Ответ: <span class="rt">1; 2; 3</span>.']}
+];
+const lvBox=$('levels');
+let lv=0, step=0, N=3, A=8;
+LV.forEach((l,i)=>{const b=document.createElement('button');b.textContent=(i+1)+'. '+l.name;b.onclick=()=>{lv=i;step=0;build();};lvBox.appendChild(b);});
+
+function build(){
+  [...lvBox.children].forEach((b,i)=>b.setAttribute('aria-pressed',i===lv));
+  const l=LV[lv];
+  if(lv===0){
+    $('body').innerHTML=`<p>Самый простой случай: x в степени n равно числу. Двигай ползунки и смотри, сколько раз красная линия y = a пересекает график y = xⁿ.</p>
+      <label class="sl"><b>n</b><input type="range" min="2" max="5" step="1" value="${N}" id="sN"><output id="oN">${N}</output></label>
+      <label class="sl"><b>a</b><input type="range" min="-8" max="8" step="1" value="${A}" id="sA"><output id="oA">${mn(A)}</output></label>
+      <table class="rule"><tr id="r1"><td>n нечётное</td><td>один корень: x = ⁿ√a</td></tr>
+        <tr id="r2"><td>n чётное, a &gt; 0</td><td>два корня: x = ±ⁿ√a</td></tr>
+        <tr id="r3"><td>n чётное, a = 0</td><td>один корень: x = 0</td></tr>
+        <tr id="r4"><td>n чётное, a &lt; 0</td><td>корней нет</td></tr></table>
+      <div class="res" id="res"></div>`;
+    $('sN').oninput=e=>{N=+e.target.value;$('oN').textContent=N;draw();};
+    $('sA').oninput=e=>{A=+e.target.value;$('oA').textContent=mn(A);draw();};
+  }else{
+    $('body').innerHTML=`<ol class="steps" id="st">${l.steps.map((s,i)=>`<li class="${i>step?'hidden':''}">${s}</li>`).join('')}</ol>
+      <div class="row"><button class="primary" id="nx">Следующий шаг</button><button id="rs">Сначала</button></div>`;
+    $('nx').disabled=step>=l.steps.length-1;
+    $('nx').onclick=()=>{step++;const li=$('st').children[step];li.classList.remove('hidden');li.classList.add('show');$('nx').disabled=step>=l.steps.length-1;draw();};
+    $('rs').onclick=()=>{step=0;build();};
+  }
+  draw();
+}
+const sup=['','','²','³','⁴','⁵'];
+function root(n,a){const r=Math.sign(a)*Math.pow(Math.abs(a),1/n);return r;}
+function draw(){
+  const l=LV[lv];
+  if(lv===0){
+    const o={x0:-3,x1:3,y0:-9,y1:9,ux:46,uy:13,sy:2,id:'g'};
+    $('eq').textContent=`x${sup[N]} = ${mn(A)}`;
+    let top='', roots=[];
+    if(N%2){roots=[root(N,A)];}else if(A>0){const r=root(N,A);roots=[-r,r];}else if(A===0)roots=[0];
+    roots.forEach(r=>top+=pt(r,o));
+    // mark intersections at y=A instead of y=0
+    top=roots.map(r=>`<circle cx="${r*o.ux}" cy="${-A*o.uy}" r="6" fill="var(--root)" stroke="var(--card)" stroke-width="2"/>`+
+      `<line x1="${r*o.ux}" y1="${-A*o.uy}" x2="${r*o.ux}" y2="0" stroke="var(--root)" stroke-width="1.5" stroke-dasharray="3 3"/>`).join('')+top;
+    frame($('gsvg'),o,curve(x=>Math.pow(x,N),o)+`<line class="hline" x1="${o.x0*o.ux}" y1="${-A*o.uy}" x2="${o.x1*o.ux}" y2="${-A*o.uy}"/>`,top);
+    $('ghint').innerHTML=`Синяя линия — y = x${sup[N]}, красная — y = ${mn(A)}. Зелёные точки — решения.`;
+    const odd=N%2===1;
+    ['r1','r2','r3','r4'].forEach((id,i)=>$(id).classList.toggle('on',[odd,!odd&&A>0,!odd&&A===0,!odd&&A<0][i]));
+    const ex=v=>{const r=Math.round(v);return Math.abs(r-v)<1e-9?mn(r):'≈ '+fmt(v);};
+    $('res').innerHTML=!roots.length?'<span class="rd">Корней нет</span>':
+      'Ответ: <span class="rt">'+roots.map(r=>'x = '+ex(r)).join('; ')+'</span>';
+  }else{
+    const o=Object.assign({id:'g'},l.o);
+    const done=step>=l.steps.length-1;
+    $('eq').textContent=l.eq;
+    frame($('gsvg'),o,curve(poly(l.c),o),done?l.roots.map(r=>pt(r,o,mn(r))).join(''):'');
+    $('ghint').textContent=done?'Зелёные точки — найденные корни: здесь график пересекает ось Ox.':'Корни появятся на графике, когда дойдёшь до ответа.';
+  }
+}
+build();
+
+// ---------- divisor checker ----------
+const PR=[
+  {c:[1,-2,-5,6]},{c:[1,1,-4,-4]},{c:[1,0,-3,-2]}
+];
+function polyStr(c){const v=['x³','x²','x',''];let s='';c.forEach((k,i)=>{if(!k)return;const ab=Math.abs(k),t=(ab===1&&v[i])?v[i]:ab+v[i];s+=s?(k<0?' − ':' + ')+t:(k<0?'−':'')+t;});return s+' = 0';}
+function divisors(n){n=Math.abs(n);const d=[];for(let i=1;i<=n;i++)if(n%i===0)d.push(i,-i);return d;}
+let cur=0;
+const pBox=$('presets');
+PR.forEach((p,i)=>{const b=document.createElement('button');b.textContent='Уравнение '+(i+1);b.onclick=()=>{cur=i;setP();};pBox.appendChild(b);});
+function setP(){
+  [...pBox.children].forEach((b,i)=>{b.classList.toggle('primary',i===cur);});
+  const c=PR[cur].c, f=c[3];
+  $('ceq').textContent=polyStr(c);
+  $('cdiv').textContent=`Свободный член: ${mn(f)}. Его делители:`;
+  $('log').innerHTML='';
+  $('divs').innerHTML=divisors(f).map(d=>`<button data-d="${d}">${mn(d)}</button>`).join('');
+  $('divs').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    const d=+b.dataset.d, pw=[3,2,1,0], vals=c.map((k,i)=>k*Math.pow(d,pw[i]));
+    const ds=d<0?`(${mn(d)})`:d;
+    const sub=c.map((k,i)=>{if(!k)return'';const ab=Math.abs(k),sg=k<0?' − ':' + ';
+      const t=pw[i]===0?ab:(ab===1?'':ab+'·')+ds+(pw[i]>1?sup[pw[i]]:'');return sg+t;}).join('').replace(/^ \+ /,'').replace(/^ − /,'−');
+    const num=vals.filter((v,i)=>c[i]).map((v,i)=>i===0?mn(v):(v<0?' − ':' + ')+Math.abs(v)).join('');
+    const tot=vals.reduce((a,b)=>a+b,0), ok=tot===0;
+    b.classList.add(ok?'yes':'no');
+    const li=document.createElement('li');
+    li.innerHTML=`x = ${mn(d)}: ${sub} = ${num} = <b class="${ok?'rt':'rd'}">${mn(tot)}</b> ${ok?'✔ корень!':'✘'}`;
+    $('log').prepend(li);
+  });
+}
+setP();
+
+// ---------- homework ----------
+const HW=[
+  ['простой','Найдите корень уравнения x³ = 64.'],
+  ['простой','Найдите корень уравнения (x − 2)³ = 27.'],
+  ['простой','Решите уравнение x⁴ = 81. Если уравнение имеет более одного корня, в ответе укажите больший из них.'],
+  ['простой','Найдите корень уравнения (x + 1)³ = −8.'],
+  ['средний','Решите уравнение x³ − 16x = 0. Если уравнение имеет более одного корня, в ответе укажите наибольший из них.'],
+  ['средний','Решите уравнение x³ + 5x² = 0. Если уравнение имеет более одного корня, в ответе укажите наименьший из них.'],
+  ['средний','Решите уравнение x⁴ − 10x² + 9 = 0. Если уравнение имеет более одного корня, в ответе укажите наибольший из них.'],
+  ['сложный','Решите уравнение x⁴ − 3x² − 4 = 0. Если уравнение имеет более одного корня, в ответе укажите наибольший из них.'],
+  ['сложный','Решите уравнение x³ + 3x² − 4x − 12 = 0. Если уравнение имеет более одного корня, в ответе укажите наименьший из них.'],
+  ['сложный','Решите уравнение x³ − 7x + 6 = 0. Если уравнение имеет более одного корня, в ответе укажите наибольший из них.']
+];
+$('hwlist').innerHTML=HW.map(([t,q],i)=>`<div class="hw"><h3>Задание ${i+1}<span class="tag">${t}</span></h3><p>${q}</p><p class="ans">Ответ: ____________</p></div>`).join('');
+$('printHw').onclick=()=>{document.body.classList.add('print-hw');window.print();};
+window.addEventListener('afterprint',()=>document.body.classList.remove('print-hw'));
+})();
+</script>
+</body>
+</html>
