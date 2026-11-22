@@ -1,0 +1,44 @@
+:root{
+  --paper:#F7FAFD; --grid:#DCE7F2; --ink:#1B2430; --muted:#5A6878;
+  --blue:#2457C5; --red:#D2353F; --green:#1E8A4C; --violet:#8A3FC2; --orange:#C46A0A; --margin:#E58A94;
+  --card:#FFFFFF; --line:#C9D6E4;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#17222C; --grid:#223241; --ink:#E8EEF4; --muted:#9AA9B8;
+    --blue:#6E9BFF; --red:#FF6F78; --green:#4CC384; --violet:#C08BFF; --orange:#F0A24B; --margin:#8A3E47;
+    --card:#1E2B37; --line:#33475A;
+  }
+}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0; color:var(--ink); font:18px/1.6 "PT Sans",system-ui,sans-serif;
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+.page{max-width:1020px;margin:0 auto;padding:24px 20px 64px 44px;position:relative;min-height:100vh}
+.page::before{content:"";position:absolute;left:24px;top:0;bottom:0;width:2px;background:var(--margin)}
+h1,h2{font-family:Caveat,"Comic Sans MS",cursive;font-weight:700;line-height:1.1;margin:0}
+h1{font-size:clamp(2.4rem,6vw,3.6rem)}
+h2{font-size:1.9rem}
+.lead{color:var(--muted);font-size:1.1rem;max-width:68ch;margin:6px 0 32px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:20px}
+.card{
+  display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--ink);
+  background:var(--card);border:2px solid var(--line);border-left:6px solid var(--c);
+  border-radius:14px;padding:16px 18px;transition:transform .12s,border-color .12s;
+}
+.card:hover,.card:focus-visible{transform:translateY(-3px) rotate(-.4deg);border-color:var(--c)}
+.card:focus-visible{outline:3px solid var(--c);outline-offset:3px}
+.card p{margin:0;color:var(--muted);font-size:.98rem}
+.fx{font-family:Caveat,cursive;font-weight:700;font-size:2rem;line-height:1.15;color:var(--c)}
+.go{margin-top:auto;padding-top:6px;font-weight:700;color:var(--c)}
+@media (prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+h2{margin:0 0 4px}
+.back{display:inline-block;margin-bottom:12px;color:var(--muted);text-decoration:none;font-weight:700}
+.back:hover,.back:focus-visible{color:var(--ink);text-decoration:underline}
+.count{color:var(--muted);font-size:.98rem}
+.big{font-family:Caveat,cursive;font-weight:700;font-size:4rem;line-height:1;color:var(--c)}
