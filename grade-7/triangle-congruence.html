@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Признаки равенства треугольников</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>:root{
+  --paper:#F7FAFD; --grid:#DCE7F2; --ink:#1B2430; --muted:#5A6878;
+  --blue:#2457C5; --red:#D2353F; --green:#1E8A4C; --violet:#8A3FC2; --orange:#C46A0A; --margin:#E58A94;
+  --card:#FFFFFF; --line:#C9D6E4; --hl:#FFF3B0;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#17222C; --grid:#223241; --ink:#E8EEF4; --muted:#9AA9B8;
+    --blue:#6E9BFF; --red:#FF6F78; --green:#4CC384; --violet:#C08BFF; --orange:#F0A04B; --margin:#8A3E47;
+    --card:#1E2B37; --line:#33475A; --hl:#4A4320;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17222C; --grid:#223241; --ink:#E8EEF4; --muted:#9AA9B8;
+  --blue:#6E9BFF; --red:#FF6F78; --green:#4CC384; --violet:#C08BFF; --orange:#F0A04B; --margin:#8A3E47;
+  --card:#1E2B37; --line:#33475A; --hl:#4A4320;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;color:var(--ink);font:18px/1.6 "PT Sans",system-ui,sans-serif;background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px}
+.page{max-width:1000px;margin:0 auto;padding:24px 20px 64px 44px;position:relative}
+.page::before{content:"";position:absolute;left:24px;top:0;bottom:0;width:2px;background:var(--margin)}
+h1,h2,h3{font-family:Caveat,"Comic Sans MS",cursive;font-weight:700;line-height:1.1;margin:0}
+h1{font-size:clamp(2.3rem,6vw,3.4rem)}
+h2{font-size:2.2rem;margin:52px 0 12px}
+h3{font-size:1.6rem;margin:0 0 6px}
+p{max-width:68ch;margin:0 0 12px}
+.lead{color:var(--muted);font-size:1.1rem}
+.hint{color:var(--muted);font-size:.95rem}
+.b{color:var(--blue);font-weight:700}.r{color:var(--red);font-weight:700}.g{color:var(--green);font-weight:700}.v{color:var(--violet);font-weight:700}
+i{font-family:"Times New Roman",Georgia,serif;font-size:1.08em}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.8em;line-height:1.15;margin:0 2px}
+.fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 2px}
+.big{font-size:clamp(1.5rem,4.5vw,2rem);font-weight:700}
+.card{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:16px 20px}
+.sticky{background:var(--hl);border-radius:4px;padding:14px 20px;transform:rotate(-.5deg);box-shadow:2px 3px 0 var(--line);max-width:720px}
+.sticky p{margin:4px 0}.sticky ol{margin:6px 0 0;padding-left:22px}.sticky li{margin:4px 0}
+button{font:inherit;font-weight:700;cursor:pointer;border-radius:10px;padding:9px 16px;border:2px solid var(--ink);background:var(--card);color:var(--ink)}
+button.primary{background:var(--green);border-color:var(--green);color:#fff}
+button:disabled{opacity:.45;cursor:default}
+button:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+.sl{display:grid;grid-template-columns:2em 1fr 2em;gap:10px;align-items:center;margin:6px 0;max-width:360px}
+.sl output{font-weight:700;text-align:right}
+input[type=range]{width:100%;accent-color:var(--blue)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.steps{counter-reset:st;list-style:none;padding:0;margin:8px 0 0}
+.steps li{counter-increment:st;position:relative;padding:6px 0 6px 42px;border-bottom:1px dashed var(--line)}
+.steps li::before{content:counter(st);position:absolute;left:0;top:5px;width:30px;height:30px;border-radius:50%;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:Caveat,cursive;font-size:1.3rem;font-weight:700}
+.steps li.hidden{display:none}
+.steps li.show{animation:pop .35s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+.ex .q{font-size:1.35rem;font-weight:700}
+.ex .row{margin-top:8px}.ex button{padding:6px 12px;font-size:.95rem}
+.quiz .q{font-size:1.5rem;font-weight:700;margin:6px 0 10px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.opts button{font-size:1.25rem;font-weight:700;padding:12px;text-align:center}
+.opts button.ok{background:var(--green);border-color:var(--green);color:#fff}
+.opts button.no{border-color:var(--red);color:var(--red)}
+.fb{min-height:1.6em;font-weight:700;margin-top:10px}
+.fb.good{color:var(--green)}.fb.bad{color:var(--red)}
+.score{font-family:Caveat,cursive;font-size:1.6rem;font-weight:700}
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tabs button{padding:6px 12px;font-size:1rem}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:var(--card)}
+.mist{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.mist div{background:var(--card);border-left:5px solid var(--red);padding:14px 16px;border-radius:0 10px 10px 0}
+.mist .bad{color:var(--red);font-weight:700}
+.mist .bad::before{content:"✘ "}
+.mist b{color:var(--green)}
+.hw{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:12px 20px;margin-bottom:14px;break-inside:avoid;max-width:760px}
+.hw p{margin:0;font-size:1.2rem;line-height:1.9}
+.hw .ans{margin-top:4px;color:var(--muted);font-size:1rem}
+.tag{display:inline-block;font-family:"PT Sans",sans-serif;font-size:.85rem;font-weight:700;border:1.5px solid var(--muted);color:var(--muted);border-radius:20px;padding:0 10px;margin-left:8px;vertical-align:middle}
+@media (max-width:760px){.page{padding-left:36px}.page::before{left:18px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{
+  body{background:#fff;color:#000}
+  body.print-hw .page>*:not(#hwsec){display:none!important}
+  body.print-hw .page::before,body.print-hw #hwsec button{display:none!important}
+}
+svg{display:block;width:100%;height:auto;overflow:visible}
+svg text{font:italic 17px "Times New Roman",Georgia,serif;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.seg{stroke:var(--ink);stroke-width:2.2;fill:none;stroke-linecap:round}
+.dash{stroke:var(--muted);stroke-width:1.5;stroke-dasharray:5 5;fill:none}
+.mk{stroke-width:2.4;fill:none;stroke-linecap:round}
+.m1{stroke:var(--blue)}.m2{stroke:var(--red)}.m3{stroke:var(--green)}
+.pf1{fill:var(--blue);fill-opacity:.12}.pf2{fill:var(--red);fill-opacity:.12}
+.figbox{max-width:440px;margin:6px auto 10px}
+.figbox.sm{max-width:300px}
+#cfig text{font-size:20px}
+.rule{font-size:1.15rem;margin:10px 0 0;max-width:none}
+.given{font-weight:700;margin:6px 0 0}
+.ex .q{font-size:1.1rem}
+.quiz .q{font-size:1.25rem}
+.opts button{font-size:1.1rem}
+.trio{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px 28px;margin-top:8px}
+.trio>div{text-align:center;font-weight:700}
+.hw .space{display:none}
+@media print{.hw .space{display:block;height:120px}.hw{border-color:#999}}
+</style></head><body>
+<main class="page">
+  <h1>Три признака равенства треугольников</h1>
+  <p class="lead">Как доказать, что два треугольника одинаковые, не измеряя все их стороны и углы? Достаточно проверить всего три элемента — но не любые.</p>
+
+  <h2>Какие треугольники называют равными</h2>
+  <div class="sticky">
+    <p><b>Равные треугольники</b> — те, которые можно <b>совместить наложением</b>.</p>
+    <p>У равных треугольников равны все шесть пар элементов: три стороны и три угла.</p>
+    <p class="b">Против равных сторон лежат равные углы, против равных углов — равные стороны.</p>
+    <p>Запись △<i>ABC</i> = △<i>A</i>₁<i>B</i>₁<i>C</i>₁ означает: <i>A</i> ↔ <i>A</i>₁, <i>B</i> ↔ <i>B</i>₁, <i>C</i> ↔ <i>C</i>₁ — порядок букв важен.</p>
+  </div>
+
+  <h2>Признаки: хватит трёх элементов</h2>
+  <p>Выбери признак и посмотри, какие элементы отмечены. Одинаковое число чёрточек — равные стороны, одинаковое число дуг — равные углы. Потом наложи треугольники друг на друга.</p>
+  <div class="card">
+    <div class="tabs" id="ctabs" role="group" aria-label="Признак"><button aria-pressed="true" data-m="0">I признак</button><button aria-pressed="false" data-m="1">II признак</button><button aria-pressed="false" data-m="2">III признак</button></div>
+    <p class="rule" id="crule"></p>
+    <p class="given" id="cgiven"></p>
+    <div class="figbox" id="cfig" style="max-width:560px"></div>
+    <div class="row"><button class="primary" id="cGo">Наложить</button><button id="cBack">Развести</button></div>
+    <p class="hint" id="cmsg" style="margin-top:10px" aria-live="polite"></p>
+  </div>
+
+  <h2>Шпаргалка</h2>
+  <div class="grid2" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+    <div class="card"><h3 class="b">I признак</h3><p class="big">СУС</p><p><b>Две стороны и угол между ними.</b></p><div class="figbox sm" data-f="c1"></div></div>
+    <div class="card"><h3 class="r">II признак</h3><p class="big">УСУ</p><p><b>Сторона и два прилежащих к ней угла.</b></p><div class="figbox sm" data-f="c2"></div></div>
+    <div class="card"><h3 class="g">III признак</h3><p class="big">ССС</p><p><b>Три стороны.</b></p><div class="figbox sm" data-f="c3"></div></div>
+  </div>
+
+  <h2>А если взять другие три элемента?</h2>
+  <div class="grid2">
+    <div class="card"><h3>Угол не между сторонами</h3>
+      <p>Сторона <i>AB</i>, сторона <i>BC</i> и угол <i>A</i> не меняются. Поверни сторону <i>BC</i> вокруг точки <i>B</i>.</p>
+      <div class="figbox" id="ssafig"></div>
+      <div class="row"><button class="primary" id="ssaGo">Повернуть сторону <i>BC</i></button></div>
+      <p class="hint" id="ssamsg" style="margin-top:10px" aria-live="polite"></p></div>
+    <div class="card"><h3>Три угла</h3>
+      <p>У этих треугольников все углы равны. Меняй размер второго.</p>
+      <div class="figbox" id="aaafig"></div>
+      <label for="ksl" class="hint">Размер второго треугольника</label>
+      <input type="range" id="ksl" min="45" max="100" value="60">
+      <p class="hint" id="aaamsg" style="margin-top:10px" aria-live="polite"></p></div>
+  </div>
+
+  <h2>Разбираем задачи</h2>
+  <p>План доказательства всегда один: выбрать два треугольника → найти три пары равных элементов (и объяснить, почему они равны) → назвать признак → сделать вывод.</p>
+  <div class="grid2">
+    <div class="card ex"><div class="q">1. Отрезки <i>AB</i> и <i>CD</i> пересекаются в точке <i>O</i> — середине каждого из них. Докажите, что △<i>AOC</i> = △<i>BOD</i>. Найдите <i>BD</i>, если <i>AC</i> = 7 см.</div>
+      <div class="figbox sm" data-f="e1"></div><ol class="steps">
+      <li><span class="b"><i>AO</i> = <i>OB</i></span> и <span class="r"><i>CO</i> = <i>OD</i></span> — по условию: <i>O</i> — середина отрезков.</li>
+      <li class="hidden">∠<i>AOC</i> = ∠<i>BOD</i> — как <b>вертикальные</b> углы.</li>
+      <li class="hidden">Этот угол лежит <b>между</b> равными сторонами, значит △<i>AOC</i> = △<i>BOD</i> <span class="g">по I признаку</span>.</li>
+      <li class="hidden">В равных треугольниках соответственные стороны равны: <span class="g"><i>BD</i> = <i>AC</i> = 7 см</span>.</li></ol>
+      <div class="row"><button class="primary nx">Дальше</button><button class="rs">Сначала</button></div></div>
+    <div class="card ex"><div class="q">2. Луч <i>AD</i> — биссектриса угла <i>A</i>. На сторонах угла отложены равные отрезки <i>AB</i> = <i>AC</i>. Докажите, что <i>BD</i> = <i>CD</i>.</div>
+      <div class="figbox sm" data-f="e2"></div><ol class="steps">
+      <li>Рассмотрим △<i>ABD</i> и △<i>ACD</i>. <span class="b"><i>AB</i> = <i>AC</i></span> — по условию.</li>
+      <li class="hidden">∠<i>BAD</i> = ∠<i>CAD</i>, потому что <i>AD</i> — биссектриса.</li>
+      <li class="hidden"><i>AD</i> — <b>общая сторона</b>. Угол лежит между <i>AB</i> и <i>AD</i> (и между <i>AC</i> и <i>AD</i>).</li>
+      <li class="hidden">△<i>ABD</i> = △<i>ACD</i> <span class="g">по I признаку</span>, поэтому <span class="g"><i>BD</i> = <i>CD</i></span>.</li></ol>
+      <div class="row"><button class="primary nx">Дальше</button><button class="rs">Сначала</button></div></div>
+    <div class="card ex"><div class="q">3. В четырёхугольнике <i>ABCD</i> ∠<i>BAC</i> = ∠<i>DAC</i> и ∠<i>BCA</i> = ∠<i>DCA</i>. Докажите, что <i>AB</i> = <i>AD</i>.</div>
+      <div class="figbox sm" data-f="e3"></div><ol class="steps">
+      <li>Рассмотрим △<i>ABC</i> и △<i>ADC</i>. Сторона <i>AC</i> — <b>общая</b>.</li>
+      <li class="hidden"><span class="b">∠<i>BAC</i> = ∠<i>DAC</i></span>, <span class="r">∠<i>BCA</i> = ∠<i>DCA</i></span> — по условию.</li>
+      <li class="hidden">Оба угла <b>прилежат</b> к стороне <i>AC</i>, значит △<i>ABC</i> = △<i>ADC</i> <span class="g">по II признаку</span>.</li>
+      <li class="hidden">Стороны <i>AB</i> и <i>AD</i> лежат против равных углов (при вершине <i>C</i>): <span class="g"><i>AB</i> = <i>AD</i></span>.</li></ol>
+      <div class="row"><button class="primary nx">Дальше</button><button class="rs">Сначала</button></div></div>
+    <div class="card ex"><div class="q">4. В четырёхугольнике <i>ABCD</i> <i>AB</i> = <i>CD</i> и <i>BC</i> = <i>AD</i>. Докажите, что ∠<i>B</i> = ∠<i>D</i>.</div>
+      <div class="figbox sm" data-f="e4"></div><ol class="steps">
+      <li>Проведём диагональ <i>AC</i>. Получили △<i>ABC</i> и △<i>CDA</i>.</li>
+      <li class="hidden"><span class="b"><i>AB</i> = <i>CD</i></span>, <span class="r"><i>BC</i> = <i>DA</i></span> — по условию, <i>AC</i> — общая сторона.</li>
+      <li class="hidden">Три стороны равны, значит △<i>ABC</i> = △<i>CDA</i> <span class="g">по III признаку</span>.</li>
+      <li class="hidden">Углы <i>B</i> и <i>D</i> лежат против общей стороны <i>AC</i>: <span class="g">∠<i>B</i> = ∠<i>D</i></span>.</li></ol>
+      <div class="row"><button class="primary nx">Дальше</button><button class="rs">Сначала</button></div></div>
+  </div>
+
+  <h2>Частые ошибки</h2>
+  <div class="mist">
+    <div><span class="bad">Две стороны и любой угол — это I признак</span><br>Угол должен лежать <b>между</b> этими двумя сторонами.</div>
+    <div><span class="bad">Три угла равны — треугольники равны</span><br>Нет: они могут быть <b>разного размера</b>. Нужна хотя бы одна сторона.</div>
+    <div><span class="bad">△<i>ABC</i> = △<i>MNK</i>, значит <i>AB</i> = <i>NK</i></span><br>Смотри на порядок букв: <b><i>AB</i> = <i>MN</i></b>, <i>BC</i> = <i>NK</i>, <i>AC</i> = <i>MK</i>.</div>
+    <div><span class="bad">Сторона и любые два угла — это II признак</span><br>Оба угла должны <b>прилежать</b> к этой стороне (их вершины — концы стороны).</div>
+  </div>
+
+  <h2>Тренажёр</h2>
+  <div class="card quiz" style="max-width:760px">
+    <div class="tabs" id="qtabs" role="group" aria-label="Тип"><button aria-pressed="true" data-t="which">Какой признак?</button><button aria-pressed="false" data-t="miss">Чего не хватает?</button><button aria-pressed="false" data-t="corr">Равные элементы</button></div>
+    <div class="q" id="qq"></div><div class="opts" id="qo"></div>
+    <div class="fb" id="qf" aria-live="polite"></div>
+    <div class="row"><button class="primary" id="qn">Следующий пример</button><span class="score" id="qs">Верно: 0</span></div>
+  </div>
+
+  <section id="hwsec">
+    <h2>Домашнее задание</h2>
+    <p>В задачах на доказательство сделайте рисунок, отметьте равные элементы и запишите, по какому признаку равны треугольники.</p>
+    <div class="row" style="margin-bottom:18px"><button id="printHw">Распечатать задание</button></div>
+    <div id="hwlist"></div>
+  </section>
+</main>
+<script>(function(){
+const $=id=>document.getElementById(id);
+const rint=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const f1=n=>Math.round(n*10)/10;
+
+// ---- drawing ----
+// o: {pts:{name:[x,y]}, polys:[[names,cls]], segs:[[a,b,cls?]], ticks:[[a,b,n]], arcs:[[u,v,w,n,r?]] (v — вершина угла),
+//     lab:{name:[dx,dy]}, labr:{name:r}, nolab:[names], vb, alt}
+function fig(o){
+  const P=o.pts, N=Object.keys(P);
+  const cen=ns=>{const s=ns.reduce((a,n)=>[a[0]+P[n][0],a[1]+P[n][1]],[0,0]);return [s[0]/ns.length,s[1]/ns.length]};
+  const G=cen(N.filter(n=>!(o.nolab||[]).includes(n)));
+  let s='';
+  (o.polys||[]).forEach(([ns,c])=>{s+=`<polygon class="${c}" points="${ns.map(n=>f1(P[n][0])+','+f1(P[n][1])).join(' ')}"/>`});
+  (o.arcs||[]).forEach(([u,v,w,n,r=20])=>{
+    const a1=Math.atan2(P[u][1]-P[v][1],P[u][0]-P[v][0]), a2=Math.atan2(P[w][1]-P[v][1],P[w][0]-P[v][0]);
+    const sw=Math.sin(a2-a1)>0?1:0;
+    for(let k=0;k<n;k++){const R=r+k*4.5;
+      s+=`<path class="mk m${n}" d="M${f1(P[v][0]+R*Math.cos(a1))} ${f1(P[v][1]+R*Math.sin(a1))} A${R} ${R} 0 0 ${sw} ${f1(P[v][0]+R*Math.cos(a2))} ${f1(P[v][1]+R*Math.sin(a2))}"/>`;}
+  });
+  (o.segs||[]).forEach(([a,b,c])=>{s+=`<line class="${c||'seg'}" x1="${f1(P[a][0])}" y1="${f1(P[a][1])}" x2="${f1(P[b][0])}" y2="${f1(P[b][1])}"/>`});
+  (o.ticks||[]).forEach(([a,b,n])=>{
+    const dx=P[b][0]-P[a][0], dy=P[b][1]-P[a][1], L=Math.hypot(dx,dy)||1, ux=dx/L, uy=dy/L;
+    const mx=(P[a][0]+P[b][0])/2, my=(P[a][1]+P[b][1])/2;
+    for(let k=0;k<n;k++){const t=(k-(n-1)/2)*5, x=mx+ux*t, y=my+uy*t;
+      s+=`<line class="mk m${n}" x1="${f1(x-uy*6)}" y1="${f1(y+ux*6)}" x2="${f1(x+uy*6)}" y2="${f1(y-ux*6)}"/>`;}
+  });
+  N.forEach(n=>{
+    if((o.nolab||[]).includes(n))return;
+    let off=o.lab&&o.lab[n];
+    if(!off){
+      const poly=(o.polys||[]).find(([ns])=>ns.includes(n)), c=poly?cen(poly[0]):G;
+      let dx=P[n][0]-c[0], dy=P[n][1]-c[1]; const L=Math.hypot(dx,dy); if(L<1){dx=0;dy=1}else{dx/=L;dy/=L}
+      const r=(o.labr&&o.labr[n])||15; off=[dx*r,dy*r];
+    }
+    s+=`<text x="${f1(P[n][0]+off[0])}" y="${f1(P[n][1]+off[1])}">${n.replace(/1$/,'₁')}</text>`;
+  });
+  return `<svg viewBox="${o.vb}" role="img" aria-label="${o.alt||'Чертёж к задаче'}">${s}</svg>`;
+}
+// два треугольника ABC и A1B1C1; m: {s:{номер стороны:чёрточек}, a:{номер вершины:дуг}}
+// сторона k соединяет вершины k и k+1; угол v — при вершине v
+function pair(T1,T2,m,extra){
+  const n1=['A','B','C'], n2=['A1','B1','C1'], pts={}, segs=[], ticks=[], arcs=[];
+  [[n1,T1],[n2,T2]].forEach(([ns,T])=>{
+    ns.forEach((n,i)=>{pts[n]=T[i];segs.push([n,ns[(i+1)%3]])});
+    Object.keys(m.s||{}).forEach(k=>ticks.push([ns[+k],ns[(+k+1)%3],m.s[k]]));
+    Object.keys(m.a||{}).forEach(v=>arcs.push([ns[(+v+2)%3],ns[+v],ns[(+v+1)%3],m.a[v]]));
+  });
+  return fig(Object.assign({pts,segs,ticks,arcs,polys:[[n1,'pf1'],[n2,'pf2']],alt:'Два треугольника с отмеченными равными элементами'},extra));
+}
+const MARKS=[{s:{0:1,2:2},a:{0:1}},{s:{0:1},a:{0:1,1:2}},{s:{0:1,1:2,2:3}}];
+
+// ---- наложение ----
+const T1=[[30,165],[170,165],[135,50]], C0=[(30+170+135)/3,(165+165+50)/3], TH=140*Math.PI/180, SH=[183,-17];
+const T2=t=>{const th=TH*(1-t), c=Math.cos(th), s=Math.sin(th);
+  return T1.map(p=>{const dx=p[0]-C0[0], dy=p[1]-C0[1];return [C0[0]+dx*c-dy*s+SH[0]*(1-t), C0[1]+dx*s+dy*c+SH[1]*(1-t)]})};
+const CR=[
+  ['Если <b>две стороны и угол между ними</b> одного треугольника соответственно равны двум сторонам и углу между ними другого треугольника, то такие треугольники равны.',
+   'Дано: <span class="b"><i>AB</i> = <i>A</i>₁<i>B</i>₁</span>, <span class="r"><i>AC</i> = <i>A</i>₁<i>C</i>₁</span>, <span class="b">∠<i>A</i> = ∠<i>A</i>₁</span>',
+   'Совпали! Значит, равны и остальные элементы: <i>BC</i> = <i>B</i>₁<i>C</i>₁, ∠<i>B</i> = ∠<i>B</i>₁, ∠<i>C</i> = ∠<i>C</i>₁.'],
+  ['Если <b>сторона и два прилежащих к ней угла</b> одного треугольника соответственно равны стороне и двум прилежащим к ней углам другого треугольника, то такие треугольники равны.',
+   'Дано: <span class="b"><i>AB</i> = <i>A</i>₁<i>B</i>₁</span>, <span class="b">∠<i>A</i> = ∠<i>A</i>₁</span>, <span class="r">∠<i>B</i> = ∠<i>B</i>₁</span>',
+   'Совпали! Значит, равны и остальные элементы: <i>AC</i> = <i>A</i>₁<i>C</i>₁, <i>BC</i> = <i>B</i>₁<i>C</i>₁, ∠<i>C</i> = ∠<i>C</i>₁.'],
+  ['Если <b>три стороны</b> одного треугольника соответственно равны трём сторонам другого треугольника, то такие треугольники равны.',
+   'Дано: <span class="b"><i>AB</i> = <i>A</i>₁<i>B</i>₁</span>, <span class="r"><i>BC</i> = <i>B</i>₁<i>C</i>₁</span>, <span class="g"><i>AC</i> = <i>A</i>₁<i>C</i>₁</span>',
+   'Совпали! Значит, равны и все углы: ∠<i>A</i> = ∠<i>A</i>₁, ∠<i>B</i> = ∠<i>B</i>₁, ∠<i>C</i> = ∠<i>C</i>₁.']
+];
+let mode=0, ot=0, oraf=0;
+function cDraw(){
+  const r=15+19*ot;
+  $('cfig').innerHTML=pair(T1,T2(ot),MARKS[mode],{vb:'0 0 400 215',labr:{A1:r,B1:r,C1:r}});
+  $('cGo').disabled=ot>=1;$('cBack').disabled=ot<=0;
+  $('cmsg').innerHTML=ot>=1?CR[mode][2]:'Отмечены только три пары равных элементов. Совпадут ли треугольники целиком?';
+}
+function cAnim(to){
+  cancelAnimationFrame(oraf);
+  if(reduce){ot=to;cDraw();return;}
+  const from=ot, t0=performance.now();
+  const step=now=>{const u=Math.min(1,(now-t0)/900), e=u*u*(3-2*u);ot=from+(to-from)*e;if(u>=1)ot=to;cDraw();if(u<1)oraf=requestAnimationFrame(step);};
+  oraf=requestAnimationFrame(step);
+}
+function cMode(m){mode=m;cancelAnimationFrame(oraf);ot=0;$('crule').innerHTML=CR[m][0];$('cgiven').innerHTML=CR[m][1];
+  $('ctabs').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.m===m));cDraw();}
+$('ctabs').querySelectorAll('button').forEach(b=>b.onclick=()=>cMode(+b.dataset.m));
+$('cGo').onclick=()=>cAnim(1);$('cBack').onclick=()=>cAnim(0);
+cMode(0);
+
+// ---- статичные чертежи ----
+const one=(m,alt)=>{const ns=['A','B','C'], T=[[20,125],[200,125],[150,20]], pts={}, segs=[];
+  ns.forEach((n,i)=>{pts[n]=T[i];segs.push([n,ns[(i+1)%3]])});
+  return fig({pts,segs,polys:[[ns,'pf1']],vb:'0 0 220 145',alt,
+    ticks:Object.keys(m.s||{}).map(k=>[ns[+k],ns[(+k+1)%3],m.s[k]]),
+    arcs:Object.keys(m.a||{}).map(v=>[ns[(+v+2)%3],ns[+v],ns[(+v+1)%3],m.a[v]])});};
+const FIGS={
+  c1:one(MARKS[0],'Треугольник: отмечены две стороны и угол между ними'),
+  c2:one(MARKS[1],'Треугольник: отмечены сторона и два прилежащих угла'),
+  c3:one(MARKS[2],'Треугольник: отмечены три стороны'),
+  e1:fig({vb:'0 0 240 160',alt:'Отрезки AB и CD пересекаются в точке O',pts:{A:[20,30],B:[220,130],C:[60,140],D:[180,20],O:[120,80]},
+    segs:[['A','B'],['C','D'],['A','C'],['B','D']],ticks:[['A','O',1],['O','B',1],['C','O',2],['O','D',2]],
+    arcs:[['A','O','C',1,18],['B','O','D',1,18]],lab:{O:[-2,-20]}}),
+  e2:fig({vb:'0 0 260 160',alt:'Угол A с биссектрисой AD и точками B и C на сторонах',pts:{A:[20,80],B:[170,25],C:[170,135],D:[240,80]},
+    segs:[['A','B'],['A','C'],['A','D'],['B','D'],['C','D']],ticks:[['A','B',1],['A','C',1]],arcs:[['B','A','D',1,34],['C','A','D',1,40]]}),
+  e3:fig({vb:'0 0 250 160',alt:'Четырёхугольник ABCD с диагональю AC',pts:{A:[20,80],B:[150,20],C:[230,80],D:[150,140]},
+    segs:[['A','B'],['B','C'],['C','D'],['D','A'],['A','C']],arcs:[['B','A','C',1,30],['D','A','C',1,38],['B','C','A',2,18],['D','C','A',2,30]]}),
+  e4:fig({vb:'0 0 260 160',alt:'Четырёхугольник ABCD с диагональю AC',pts:{A:[30,130],B:[80,30],C:[230,30],D:[180,130]},
+    segs:[['A','B'],['B','C'],['C','D'],['D','A'],['A','C','dash']],ticks:[['A','B',1],['C','D',1],['B','C',2],['D','A',2]]})
+};
+document.querySelectorAll('[data-f]').forEach(d=>d.innerHTML=FIGS[d.dataset.f]);
+
+// ---- контрпример: угол не между сторонами ----
+(function(){
+  const A=[30,150], B=[190,150], al=30*Math.PI/180, c=160, a=100;
+  const R=[A[0]+235*Math.cos(al),A[1]-235*Math.sin(al)];
+  const d=Math.sqrt(a*a-Math.pow(c*Math.sin(al),2));
+  const Cs=[c*Math.cos(al)-d,c*Math.cos(al)+d].map(t=>[A[0]+t*Math.cos(al),A[1]-t*Math.sin(al)]);
+  const ang=Cs.map(p=>Math.atan2(p[1]-B[1],p[0]-B[0])+2*Math.PI);
+  let pos=0, t=0, raf=0;
+  function draw(){
+    const g=ang[0]+(ang[1]-ang[0])*t, C=[B[0]+a*Math.cos(g),B[1]+a*Math.sin(g)];
+    const settled=t===0||t===1;
+    $('ssafig').innerHTML=fig({vb:'0 20 250 150',alt:'Два разных треугольника с равными двумя сторонами и углом не между ними',
+      pts:{A,B,C,R,G:Cs[t<.5?1:0]},nolab:['R','G'],
+      polys:settled?[[['A','B','C'],'pf1']]:[],
+      segs:[['A','R','dash'],['B','G','dash'],['A','B'],['B','C']].concat(settled?[['A','C']]:[]),
+      ticks:[['A','B',1],['B','C',2]],arcs:[['B','A','R',1,30]],lab:{A:[-12,6],B:[12,8],C:[-4,-16]}});
+    $('ssamsg').innerHTML=!settled?'Сторона поворачивается…':(t===0?'Треугольник № 1. Точка <i>C</i> лежит на стороне угла <i>A</i>.':'Треугольник № 2: те же <i>AB</i>, <i>BC</i> и ∠<i>A</i> — а треугольник другой! Поэтому угол обязан лежать <b>между</b> сторонами.');
+  }
+  $('ssaGo').onclick=()=>{
+    cancelAnimationFrame(raf);const to=pos?0:1;pos=to;
+    if(reduce){t=to;draw();return;}
+    const from=t, t0=performance.now();
+    const step=now=>{const u=Math.min(1,(now-t0)/900), e=u*u*(3-2*u);t=u>=1?to:from+(to-from)*e;draw();if(u<1)raf=requestAnimationFrame(step);};
+    raf=requestAnimationFrame(step);
+  };
+  draw();
+})();
+
+// ---- контрпример: три угла ----
+function aaa(){
+  const k=+$('ksl').value/100, Bg=[[10,150],[170,150],[120,30]], Sm=Bg.map(([x,y])=>[228+(x-10)*k,150+(y-150)*k]);
+  $('aaafig').innerHTML=pair(Bg,Sm,{a:{0:1,1:2,2:3}},{vb:'0 10 400 160',alt:'Два треугольника с равными углами, но разного размера'});
+  $('aaamsg').innerHTML=k===1?'Стороны сравнялись — только теперь треугольники равны.':`Все углы равны, но стороны второго составляют ${Math.round(k*100)}% сторон первого. Треугольники <b>не равны</b>.`;
+}
+$('ksl').oninput=aaa;aaa();
+
+// ---- пошаговые разборы ----
+function stepper(root){
+  const items=[...root.querySelectorAll('li')], next=root.querySelector('.nx'), reset=root.querySelector('.rs');
+  let i=0;
+  next.onclick=()=>{if(i<items.length-1){i++;items[i].classList.remove('hidden');items[i].classList.add('show');}if(i===items.length-1)next.disabled=true;};
+  reset.onclick=()=>{i=0;items.forEach((li,k)=>{li.classList.toggle('hidden',k>0);li.classList.remove('show')});next.disabled=false;};
+}
+document.querySelectorAll('.ex').forEach(stepper);
+
+// ---- тренажёр ----
+function quiz(gen,ids){
+  let cur,score=0,answered=false;
+  function next(){
+    cur=gen();answered=false;
+    $(ids.q).innerHTML=cur.q;
+    const opts=cur.opts||shuffle([cur.a,...cur.d.slice(0,3)]);
+    $(ids.o).innerHTML=opts.map(o=>`<button data-c="${o===cur.a?1:0}">${o}</button>`).join('');
+    $(ids.o).querySelectorAll('button').forEach(b=>b.onclick=()=>{
+      if(answered)return;answered=true;
+      const ok=b.dataset.c==='1';
+      b.classList.add(ok?'ok':'no');
+      $(ids.o).querySelector('[data-c="1"]').classList.add('ok');
+      if(ok){score++;$(ids.s).textContent='Верно: '+score;}
+      $(ids.f).innerHTML=(ok?'Верно! ':'Неверно. ')+cur.e;$(ids.f).className='fb '+(ok?'good':'bad');
+    });
+    $(ids.f).textContent='';$(ids.f).className='fb';
+  }
+  $(ids.n).onclick=next;next();
+}
+const SHAPES=[[[0,0],[140,0],[95,-90]],[[0,0],[150,0],[40,-80]],[[0,0],[115,0],[135,-95]],[[0,0],[130,0],[60,-110]]];
+function twoTri(){
+  const base=rnd(SHAPES);
+  const rot=(pts,th,mir)=>pts.map(([x,y])=>{if(mir)x=-x;return [x*Math.cos(th)-y*Math.sin(th),x*Math.sin(th)+y*Math.cos(th)]});
+  const a=rot(base,rint(-15,15)*Math.PI/180,false), b=rot(base,rint(50,310)*Math.PI/180,Math.random()<.5);
+  const bb=p=>{const xs=p.map(q=>q[0]), ys=p.map(q=>q[1]);return [Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys)]};
+  const s=Math.min(1,...[a,b].flatMap(p=>{const q=bb(p);return [135/(q[2]-q[0]),110/(q[3]-q[1])]}));
+  const put=(p,cx)=>{const q=bb(p), mx=(q[0]+q[2])/2, my=(q[1]+q[3])/2;return p.map(([x,y])=>[(x-mx)*s+cx,(y-my)*s+85])};
+  return [put(a,90),put(b,275)];
+}
+const OPT=['I признак','II признак','III признак','Нельзя сделать вывод'];
+let qtype='which';
+function gen(){
+  if(qtype==='which'){
+    const v=rint(0,2), w=(v+1)%3, u=(v+2)%3, kind=rnd(['I','I','II','II','III','III','ssa','ssa','aaa','ss']);
+    const K={
+      I:[{s:{[u]:1,[v]:2},a:{[v]:1}},0,'Отмечены две стороны и угол между ними.'],
+      II:[{s:{[v]:1},a:{[v]:1,[w]:2}},1,'Отмечены сторона и два прилежащих к ней угла.'],
+      III:[{s:{0:1,1:2,2:3}},2,'Отмечены три пары равных сторон.'],
+      ssa:[{s:{[u]:1,[v]:2},a:{[w]:1}},3,'Угол отмечен не между равными сторонами — I признак применить нельзя.'],
+      aaa:[{a:{0:1,1:2,2:3}},3,'Отмечены только углы. Треугольники с равными углами могут быть разного размера.'],
+      ss:[{s:{[u]:1,[v]:2}},3,'Отмечены только две пары элементов, а нужно три.']
+    }[kind];
+    const [P,Q]=twoTri();
+    return {q:`<div class="figbox">${pair(P,Q,K[0],{vb:'0 0 365 170'})}</div>Можно ли по отметкам утверждать, что треугольники равны? По какому признаку?`,a:OPT[K[1]],opts:OPT,e:K[2]};
+  }
+  const L=['A','B','C'];
+  if(qtype==='miss'){
+    const M=rnd([['M','N','K'],['D','E','F'],['P','Q','R'],['A₁','B₁','C₁']]);
+    const v=rint(0,2), w=(v+1)%3, u=(v+2)%3;
+    const S=(i,j)=>{if(i>j)[i,j]=[j,i];return `<i>${L[i]}${L[j]}</i> = <i>${M[i]}${M[j]}</i>`};
+    const An=i=>`∠<i>${L[i]}</i> = ∠<i>${M[i]}</i>`;
+    const side=(i,j)=>{if(i>j)[i,j]=[j,i];return `<i>${L[i]}${L[j]}</i>`};
+    const c=rnd([
+      ['I',[S(v,w),S(v,u)],An(v),[An(w),An(u),S(w,u)],`Нужен угол <b>между</b> сторонами ${side(v,w)} и ${side(v,u)} — это ∠<i>${L[v]}</i>.`],
+      ['I',[S(v,w),An(v)],S(v,u),[S(w,u),An(w),An(u)],`Нужна вторая сторона угла <i>${L[v]}</i> — это ${side(v,u)}.`],
+      ['II',[S(v,w),An(v)],An(w),[An(u),S(v,u),S(w,u)],`Второй угол тоже должен прилежать к стороне ${side(v,w)} — это ∠<i>${L[w]}</i>.`],
+      ['II',[An(v),An(w)],S(v,w),[S(v,u),S(w,u),An(u)],`Нужна сторона, к которой прилежат оба угла, — это ${side(v,w)}.`],
+      ['III',[S(v,w),S(w,u)],S(v,u),[An(v),An(w),An(u)],`Для III признака нужны три стороны — не хватает ${side(v,u)}.`]
+    ]);
+    return {q:`В △<i>${L.join('')}</i> и △<i>${M.join('')}</i>: ${c[1].join(', ')}.<br>Что ещё нужно знать, чтобы применить ${c[0]} признак?`,a:c[2],d:c[3],e:c[4]};
+  }
+  const M=rnd([['K','M','N'],['P','E','T'],['D','O','M'],['S','R','Q'],['X','Z','Y']]);
+  const map=`Вершины записаны в порядке соответствия: <i>A</i> ↔ <i>${M[0]}</i>, <i>B</i> ↔ <i>${M[1]}</i>, <i>C</i> ↔ <i>${M[2]}</i>.`;
+  const eq=`△<i>ABC</i> = △<i>${M.join('')}</i>. `;
+  const PR=[[0,1],[1,2],[0,2]], k=rint(0,2), t=rint(0,2);
+  if(t===0){
+    const ln=shuffle([4,5,6,7,8,9,11,12]).slice(0,3);
+    return {q:`${eq}<i>AB</i> = ${ln[0]} см, <i>BC</i> = ${ln[1]} см, <i>AC</i> = ${ln[2]} см. Найдите <i>${M[PR[k][0]]}${M[PR[k][1]]}</i>.`,
+      a:ln[k]+' см',opts:[...ln].sort((x,y)=>x-y).map(x=>x+' см').concat('Нельзя определить'),e:map};
+  }
+  if(t===1){
+    const o=M.map(x=>`∠<i>${x}</i>`);
+    return {q:`${eq}Какой угол равен углу <i>${L[k]}</i>?`,a:o[k],opts:[...o].sort(),e:map};
+  }
+  const o=PR.map(([i,j])=>`<i>${L[i]}${L[j]}</i>`);
+  return {q:`${eq}Какая сторона равна стороне <i>${M[PR[k][0]]}${M[PR[k][1]]}</i>?`,a:o[k],opts:o,e:map};
+}
+quiz(gen,{q:'qq',o:'qo',f:'qf',s:'qs',n:'qn'});
+$('qtabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{qtype=b.dataset.t;$('qtabs').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));$('qn').click();});
+
+// ---- домашнее задание ----
+const hwPair=(m,th,mir)=>{const b=SHAPES[0], c=Math.cos(th), s=Math.sin(th);
+  const A=b.map(([x,y])=>[20+x*.6,80+y*.6]), r=b.map(([x,y])=>{if(mir)x=-x;return [(x*c-y*s)*.6,(x*s+y*c)*.6]});
+  const xs=r.map(p=>p[0]), ys=r.map(p=>p[1]), mx=(Math.min(...xs)+Math.max(...xs))/2, my=(Math.min(...ys)+Math.max(...ys))/2;
+  return pair(A,r.map(([x,y])=>[x-mx+185,y-my+52]),m,{vb:'0 0 250 105'});};
+const HW=[
+ ['простой','△<i>ABC</i> = △<i>DEF</i>, <i>AB</i> = 6 см, <i>BC</i> = 8 см, <i>AC</i> = 11 см, ∠<i>A</i> = 45°. Найдите <i>DE</i>, <i>EF</i>, <i>DF</i> и ∠<i>D</i>.'],
+ ['простой','Для каждой пары треугольников назовите признак, по которому они равны.',
+   `<div class="trio"><div>а)${hwPair(MARKS[1],2.4,false)}</div><div>б)${hwPair(MARKS[2],4.1,true)}</div><div>в)${hwPair(MARKS[0],1.2,true)}</div></div>`],
+ ['простой','Отрезки <i>AB</i> и <i>CD</i> пересекаются в точке <i>O</i>, которая является серединой каждого из них. Докажите, что △<i>AOD</i> = △<i>BOC</i>.'],
+ ['простой','В треугольниках <i>ABC</i> и <i>A</i>₁<i>B</i>₁<i>C</i>₁: <i>AB</i> = <i>A</i>₁<i>B</i>₁ = 5 см, <i>AC</i> = <i>A</i>₁<i>C</i>₁ = 7 см, ∠<i>A</i> = ∠<i>A</i>₁, <i>BC</i> = 9 см. Найдите периметр треугольника <i>A</i>₁<i>B</i>₁<i>C</i>₁.'],
+ ['средний','Отрезки <i>AB</i> и <i>CD</i> пересекаются в точке <i>O</i>, <i>AO</i> = <i>OB</i>, ∠<i>CAO</i> = ∠<i>DBO</i>. Докажите, что △<i>AOC</i> = △<i>BOD</i>. Найдите <i>OD</i>, если <i>CD</i> = 12 см.'],
+ ['средний','На рисунке <i>AB</i> = <i>AD</i> и <i>BC</i> = <i>DC</i>. Докажите, что луч <i>AC</i> — биссектриса угла <i>BAD</i>.',
+   `<div class="figbox sm" style="margin-left:0">${fig({vb:'0 0 250 140',alt:'Четырёхугольник ABCD с диагональю AC',pts:{A:[20,70],B:[100,15],C:[230,70],D:[100,125]},
+     segs:[['A','B'],['B','C'],['C','D'],['D','A'],['A','C','dash']],ticks:[['A','B',1],['D','A',1],['B','C',2],['C','D',2]]})}</div>`],
+ ['средний','В четырёхугольнике <i>ABCD</i> диагональ <i>BD</i> делит углы <i>B</i> и <i>D</i> пополам. Докажите, что <i>AB</i> = <i>CB</i> и <i>AD</i> = <i>CD</i>.'],
+ ['сложный','В треугольниках <i>ABC</i> и <i>A</i>₁<i>B</i>₁<i>C</i>₁: <i>AB</i> = <i>A</i>₁<i>B</i>₁, <i>BC</i> = <i>B</i>₁<i>C</i>₁, ∠<i>B</i> = ∠<i>B</i>₁. Точки <i>D</i> и <i>D</i>₁ — середины сторон <i>BC</i> и <i>B</i>₁<i>C</i>₁. Докажите, что △<i>ABD</i> = △<i>A</i>₁<i>B</i>₁<i>D</i>₁.'],
+ ['сложный','Известно, что <i>AB</i> = <i>A</i>₁<i>B</i>₁, <i>BC</i> = <i>B</i>₁<i>C</i>₁, ∠<i>A</i> = ∠<i>A</i>₁. Можно ли утверждать, что △<i>ABC</i> = △<i>A</i>₁<i>B</i>₁<i>C</i>₁? Объясните ответ и сделайте рисунок.'],
+ ['сложный','Отрезки <i>AB</i> и <i>CD</i> пересекаются в точке <i>O</i> — середине каждого из них. Докажите, что △<i>ACD</i> = △<i>BDC</i>. <span class="hint">Подсказка: сначала докажите равенство двух других пар треугольников.</span>']
+];
+$('hwlist').innerHTML=HW.map(([t,q,f],i)=>`<div class="hw"><h3>Задание ${i+1}<span class="tag">${t}</span></h3><p>${q}</p>${f||''}<p class="ans">Решение:</p><div class="space"></div></div>`).join('');
+$('printHw').onclick=()=>{document.body.classList.add('print-hw');window.print();};
+window.addEventListener('afterprint',()=>document.body.classList.remove('print-hw'));
+
+})();</script></body></html>
