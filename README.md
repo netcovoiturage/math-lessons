@@ -9,6 +9,7 @@
 - **7 класс** — [список](grade-7/)
   - [Многочлены: стандартный вид, сложение и вычитание](grade-7/polynomials.html)
   - [Умножение одночленов и возведение в степень](grade-7/monomial-multiplication.html)
+  - [Три признака равенства треугольников](grade-7/triangle-congruence.html)
 - **9 класс** — [список](grade-9/)
   - [График квадратичной функции](grade-9/quadratic-function-graph.html)
 - **10 класс** — [список](grade-10/)
